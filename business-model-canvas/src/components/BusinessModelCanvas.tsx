@@ -1,203 +1,194 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import CanvasSegment from './CanvasSegment';
-import { getCanvasSegments } from '@/services/questionsService';
+"use client";
+import React, { useEffect, useState } from "react";
+import CanvasSegment from "./CanvasSegment/CanvasSegment";
+import { loadSessions, loadSession, saveSessions } from "@/app/actions/localStorage";
+import { CanvasData, CanvasSession } from "@/types/CanvasSession";
 
-/**
- * Main component for the Business Model Canvas
- */
-const BusinessModelCanvas = ({ userId = null }) => {
-  const [canvasData, setCanvasData] = useState({});
-  const [segments, setSegments] = useState([]);
+const EMPTY_CANVAS: CanvasData = {
+  keyPartners: { items: [], questions: [], key: "keyPartners" },
+  keyActivities: { items: [], questions: [], key: "keyActivities" },
+  keyResources: { items: [], questions: [], key: "keyResources" },
+  valuePropositions: { items: [], questions: [], key: "valuePropositions" },
+  customerRelationships: { items: [], questions: [], key: "customerRelationships" },
+  channels: { items: [], questions: [], key: "channels" },
+  customerSegments: { items: [], questions: [], key: "customerSegments" },
+  costStructure: { items: [], questions: [], key: "costStructure" },
+  revenueStreams: { items: [], questions: [], key: "revenueStreams" },
+  brainStormArea: { items: [], questions: [], key: "brainStormArea" },
+};
+
+const EMPTY_SESSION = {
+  id: 0,
+  name: "Untitled Canvas",
+  created: new Date().toISOString(),
+  lastModified: new Date().toISOString(),
+  data: EMPTY_CANVAS,
+};
+
+const BusinessModelCanvas: React.FC = () => {
+  const [sessions, setSessions] = useState<CanvasSession[]>([]);
+  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(EMPTY_SESSION.id);
+  const [canvasData, setCanvasData] = useState<CanvasData>(EMPTY_SESSION.data);
   const [loading, setLoading] = useState(true);
+  const [COLORS, setCOLORS] = useState<string[]>([]);
 
-  // Fetch segments on component mount
   useEffect(() => {
-    async function loadSegments() {
-      try {
-        const availableSegments = await getCanvasSegments();
-        setSegments(availableSegments);
-        
-        // Initialize empty canvas data for each segment
-        const initialData = {};
-        availableSegments.forEach(segment => {
-          initialData[segment] = '';
-        });
-        setCanvasData(initialData);
-      } catch (error) {
-        console.error('Failed to load canvas segments:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadSegments();
+    fetch("/api/colors")
+      .then((res) => res.json())
+      .then(setCOLORS)
+      .catch(() => setCOLORS([]));
   }, []);
 
-  // Handle content change for a segment
-  const handleContentChange = (segment, content) => {
-    setCanvasData(prevData => ({
-      ...prevData,
-      [segment]: content
-    }));
-  };
-
-  // Save canvas data to localStorage
-  const saveCanvas = () => {
-    try {
-      localStorage.setItem('businessModelCanvas', JSON.stringify(canvasData));
-      alert('Canvas saved successfully!');
-    } catch (error) {
-      console.error('Error saving canvas:', error);
-      alert('Failed to save canvas.');
+  useEffect(() => {
+    const loadedSessions = loadSessions();
+    setSessions(loadedSessions);
+    if (loadedSessions.length > 0) {
+      setSelectedSessionId(loadedSessions[0].id);
+      setCanvasData(loadedSessions[0].data);
     }
-  };
+    console.log("Loaded sessions:", loadedSessions);
+    setLoading(false);
+  }, []);
 
-  // Load canvas data from localStorage
-  const loadCanvas = () => {
-    try {
-      const savedData = localStorage.getItem('businessModelCanvas');
-      if (savedData) {
-        setCanvasData(JSON.parse(savedData));
-        alert('Canvas loaded successfully!');
-      } else {
-        alert('No saved canvas found.');
-      }
-    } catch (error) {
-      console.error('Error loading canvas:', error);
-      alert('Failed to load canvas.');
-    }
-  };
-
-  // Handle export as JSON
-  const exportCanvas = () => {
-    try {
-      const dataStr = JSON.stringify(canvasData, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      
-      const exportFileDefaultName = 'business-model-canvas.json';
-      
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-    } catch (error) {
-      console.error('Error exporting canvas:', error);
-      alert('Failed to export canvas.');
-    }
-  };
+  useEffect(() => {
+    if (!selectedSessionId) return;
+    const session = loadSession(sessions, selectedSessionId);
+    if (session) setCanvasData(session.data);
+  }, [selectedSessionId, sessions]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <div className="text-center py-10">Loading...</div>;
   }
 
-  // Function to get background color for each segment
-  const getSegmentColor = (segment) => {
-    const colorMap = {
-      'Key Partners': 'bg-yellow-50',
-      'Key Activities': 'bg-yellow-50',
-      'Key Resources': 'bg-yellow-50',
-      'Value Propositions': 'bg-blue-50',
-      'Customer Relationships': 'bg-green-50',
-      'Channels': 'bg-green-50',
-      'Customer Segments': 'bg-green-50',
-      'Cost Structure': 'bg-red-50',
-      'Revenue Streams': 'bg-red-50'
-    };
-    
-    return colorMap[segment] || 'bg-gray-50';
+  /**
+   * Unified handler for updating session data or name.
+   */
+  const handleSessionUpdate = (options: { newData?: CanvasData; newName?: string }) => {
+    console.log("Updating session with options:", options);
+    setSessions(prevSessions => {
+      const updatedSessions = prevSessions.map(session => {
+        if (session.id === selectedSessionId) {
+          return {
+            ...session,
+            data: options.newData ?? session.data,
+            name: options.newName ?? session.name,
+            lastModified: new Date().toISOString(),
+          };
+        }
+        return session;
+      });
+      saveSessions(updatedSessions);
+      // If canvas data was updated, update local state as well
+      if (options.newData) setCanvasData(options.newData);
+      return updatedSessions;
+    });
   };
 
+  /**
+   * Handler for when a note is added, removed, or edited in a segment.
+   */
+  const handleSegmentChange = (segmentKey: keyof CanvasData, items: any[], questions: string[]) => {
+    const newCanvasData = {
+      ...canvasData,
+      [segmentKey]: {
+        items,
+        questions,
+      },
+    };
+    handleSessionUpdate({ newData: newCanvasData });
+  };
+
+  /**
+   * Handler for when the session name changes.
+   */
+  const handleSessionNameChange = (newName: string) => {
+    handleSessionUpdate({ newName });
+  };
+
+  const getLastModified = () =>
+    sessions.find((s) => s.id === selectedSessionId)?.lastModified ?? "";
   return (
-    <div className="container mx-auto px-4 py-8">
-
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        {/* Row 1 */}
-        <div className="md:col-span-1">
-          <CanvasSegment 
-            title="Key Partners" 
-            content={canvasData['Key Partners']}
-            onContentChange={handleContentChange}
-            backgroundColor={getSegmentColor('Key Partners')}
+    <>
+      <div className="w-full mx-auto mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-2 mt-5" >
+        {/* Session Selector and Name Editor */}
+        <div className="flex items-center gap-2">
+          {/* Session Dropdown */}
+          <select
+            className="border px-2 py-1 rounded"
+            value={selectedSessionId ?? ""}
+            onChange={e => setSelectedSessionId(Number(e.target.value))}
+          >
+            {sessions.map(session => (
+              <option key={session.id} value={session.id}>
+                {session.name}
+              </option>
+            ))}
+          </select>
+          {/* Session Name Input */}
+          <input
+            className="border px-2 py-1 rounded"
+            type="text"
+            value={
+              sessions.find(s => s.id === selectedSessionId)?.name ?? ""
+            }
+            onChange={e => handleSessionNameChange(e.target.value)}
+            placeholder="Session name"
+            style={{ minWidth: 120 }}
           />
         </div>
-        <div className="md:col-span-1">
-          <CanvasSegment 
-            title="Key Activities" 
-            content={canvasData['Key Activities']}
-            onContentChange={handleContentChange}
-            backgroundColor={getSegmentColor('Key Activities')}
-          />
+        {/* Last Modified Timestamp */}
+        <span className="text-gray-500 dark:text-gray-400">
+          Saved: {getLastModified()}
+        </span>
+      </div>
+      <div className="w-full mx-auto p-4 rounded-lg shadow-md bg-gray-50 dark:bg-gray-900">
+        <div className="flex flex-col md:flex-row shadow gap-2 bg-gray-100 dark:bg-gray-800">
+          <div className="flex flex-col flex-[1_1_0%] rounded shadow-sm bg-white dark:bg-gray-900">
+            <CanvasSegment segmentTitle="Key Partners" segmentData={canvasData.keyPartners} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
+          </div>
+          <div className="flex flex-col flex-[1_1_0%] gap-2">
+            <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
+              <CanvasSegment segmentTitle="Key Activities" segmentData={canvasData.keyActivities} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
+            </div>
+            <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
+              <CanvasSegment segmentTitle="Key Resources" segmentData={canvasData.keyResources} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
+            </div>
+          </div>
+          <div className="flex flex-col flex-[2_2_0%] rounded shadow-sm bg-white dark:bg-gray-900">
+            <CanvasSegment segmentTitle="Value Propositions" segmentData={canvasData.valuePropositions} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
+          </div>
+          <div className="flex flex-col flex-[1_1_0%] gap-2">
+            <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
+              <CanvasSegment segmentTitle="Customer Relationships" segmentData={canvasData.customerRelationships} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
+            </div>
+            <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
+              <CanvasSegment segmentTitle="Channels" segmentData={canvasData.channels} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
+            </div>
+          </div>
+          <div className="flex flex-col flex-[1_1_0%] rounded shadow-sm bg-white dark:bg-gray-900">
+            <CanvasSegment segmentTitle="Customer Segments" segmentData={canvasData.customerSegments} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
+          </div>
         </div>
-        <div className="md:col-span-1">
-          <CanvasSegment 
-            title="Value Propositions" 
-            content={canvasData['Value Propositions']}
-            onContentChange={handleContentChange}
-            backgroundColor={getSegmentColor('Value Propositions')}
-          />
+        <div className="flex p-4 shadow gap-2 bg-gray-100 dark:bg-gray-800">
+          <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
+            <CanvasSegment segmentTitle="Cost Structure" segmentData={canvasData.costStructure} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
+          </div>
+          <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
+            <CanvasSegment segmentTitle="Revenue Streams" segmentData={canvasData.revenueStreams} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
+          </div>
         </div>
-        <div className="md:col-span-1">
-          <CanvasSegment 
-            title="Customer Relationships" 
-            content={canvasData['Customer Relationships']}
-            onContentChange={handleContentChange}
-            backgroundColor={getSegmentColor('Customer Relationships')}
-          />
-        </div>
-        <div className="md:col-span-1">
-          <CanvasSegment 
-            title="Customer Segments" 
-            content={canvasData['Customer Segments']}
-            onContentChange={handleContentChange}
-            backgroundColor={getSegmentColor('Customer Segments')}
-          />
-        </div>
-
-        {/* Row 2 */}
-        <div className="md:col-span-1">
-          <CanvasSegment 
-            title="Key Resources" 
-            content={canvasData['Key Resources']}
-            onContentChange={handleContentChange}
-            backgroundColor={getSegmentColor('Key Resources')}
-          />
-        </div>
-        <div className="md:col-span-1"></div>
-        <div className="md:col-span-1">
-          <CanvasSegment 
-            title="Channels" 
-            content={canvasData['Channels']}
-            onContentChange={handleContentChange}
-            backgroundColor={getSegmentColor('Channels')}
-          />
-        </div>
-        <div className="md:col-span-2"></div>
-
-        {/* Row 3 */}
-        <div className="md:col-span-2">
-          <CanvasSegment 
-            title="Cost Structure" 
-            content={canvasData['Cost Structure']}
-            onContentChange={handleContentChange}
-            backgroundColor={getSegmentColor('Cost Structure')}
-          />
-        </div>
-        <div className="md:col-span-1"></div>
-        <div className="md:col-span-2">
-          <CanvasSegment 
-            title="Revenue Streams" 
-            content={canvasData['Revenue Streams']}
-            onContentChange={handleContentChange}
-            backgroundColor={getSegmentColor('Revenue Streams')}
-          />
+        <div className="flex p-4 shadow gap-2 bg-gray-100 dark:bg-gray-800">
+          <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
+            <CanvasSegment
+              segmentTitle="Brainstorm Area"
+              segmentData={canvasData.brainStormArea}
+              COLORS={COLORS}
+              handleSegmentChange={handleSegmentChange}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

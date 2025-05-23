@@ -1,0 +1,21 @@
+{
+    "header": {
+        "manageCanvasesText": "Manage Canvases",
+        "helpText": "Help"
+    },
+    "ui": {
+        "closeText": "Close",
+        "saveText": "Save",
+        "cancelText": "Cancel",
+        "deleteText": "Delete",
+        "editText": "Edit",
+        "addText": "Add",
+        "nameText": "Name",
+        "returnText": "Return"
+    },
+    "title": "Business Model Canvas",
+    "addCanvas": "Add Canvas",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this canvas?"
+}

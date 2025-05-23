@@ -1,0 +1,21 @@
+{
+  "header": {
+    "manageCanvasesText": "Beheer Canvas",
+    "helpText": "Hulp"
+  },
+  "ui": {
+    "closeText": "Sluiten",
+    "saveText": "Opslaan",
+    "cancelText": "Annuleren",
+    "deleteText": "Verwijderen",
+    "editText": "Bewerken",
+    "addText": "Toevoegen",
+    "nameText": "Naam",
+    "returnText": "Terug"
+  },
+  "title": "Business Model Canvas",
+  "addCanvas": "Canvas Toevoegen",
+  "edit": "Bewerken",
+  "delete": "Verwijderen",
+  "confirmDelete": "Weet je zeker dat je deze canvas wilt verwijderen?"
+}

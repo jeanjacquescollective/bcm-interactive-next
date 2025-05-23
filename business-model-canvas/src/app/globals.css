@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 245, 247, 250;
+}
+
+body[data-theme="dark"]  {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 24, 26, 32;
 }
 
 body {

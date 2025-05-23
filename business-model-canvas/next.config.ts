@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+
+
+
 const nextConfig = {
   // For GitHub Pages deployment
   output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
