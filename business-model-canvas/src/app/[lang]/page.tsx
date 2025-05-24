@@ -35,9 +35,7 @@ export default async function Page({
       <main className="col-span-4 row-start-2 container mx-auto px-4 max-w-8xl">
       <BusinessModelCanvas />
       </main>
-      <footer className="col-span-5 row-start-3">
       <Footer />
-      </footer>
     </div>
   );
 }

@@ -6,7 +6,7 @@ type HeaderProps = { manageCanvasesText: string; helpText: string };
 
 const Header: React.FC<HeaderProps> = (props) => {
     return (
-        <header className="col-span-5 row-start-1 gradient-bg">
+        <header className="col-span-4 row-start-1 col-start-2 gradient-bg p-4">
             <div className="w-full  max-w-7xl mx-auto flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold">
                     <span data-lang="en" className="hidden">

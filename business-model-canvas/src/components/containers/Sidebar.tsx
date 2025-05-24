@@ -6,7 +6,7 @@ const Sidebar = () => {
     return (
         <aside
             id="sidebar"
-            className=" bg-gray-800 text-white shadow-lg z-40 flex flex-col col-span-1 row-start-2"
+            className="flex flex-col col-span-1 row-start-1 row-span-2 bg-gray-800 text-white shadow-lg z-40"
         >
             <div className="p-4 flex items-center justify-between border-b border-gray-700">
             <h2 className="text-lg font-bold">Menu</h2>
