@@ -1,7 +1,7 @@
 import BusinessModelCanvas from '@/components/BusinessModelCanvas';
-import Footer from '@/components/Footer';
-import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
+import Footer from '@/components/containers/Footer';
+import Header from '@/components/containers/Header';
+import Sidebar from '@/components/containers/Sidebar';
 import { getDictionary } from './dictionaries'
 import CanvasList from './@modals/SessionList';
 import ModalImporter from '../../devHelp/ModalTest';
@@ -26,21 +26,18 @@ export default async function Page({
   }
   const dictionary = await getDictionary(lang as 'en' | 'nl');
   return (
-    <div>
+    <div className="grid grid-rows-[auto_1fr_auto] grid-cols-5 min-h-screen">
       <Header
         manageCanvasesText={dictionary.header.manageCanvasesText}
         helpText={dictionary.header.helpText}
       />
-
-      {/* <ModalImporter /> */}
       <Sidebar />
-      <main className="container mx-auto px-4  max-w-8xl">
-        <BusinessModelCanvas />
+      <main className="col-span-4 row-start-2 container mx-auto px-4 max-w-8xl">
+      <BusinessModelCanvas />
       </main>
-
-      {/* 
-      
-      <Footer /> */}
+      <footer className="col-span-5 row-start-3">
+      <Footer />
+      </footer>
     </div>
   );
 }

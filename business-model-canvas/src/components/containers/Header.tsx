@@ -1,12 +1,12 @@
-import ColorSchemeToggle from "./ui/ColorSchemeToggle";
-import Toggle from "./ui/Toggle";
+import ColorSchemeToggle from "../ui/ColorSchemeToggle";
+import Toggle from "../ui/Toggle";
 import * as Icon from 'react-feather';
 
 type HeaderProps = { manageCanvasesText: string; helpText: string };
 
 const Header: React.FC<HeaderProps> = (props) => {
     return (
-        <header className="p-4 gradient-bg">
+        <header className="col-span-5 row-start-1 gradient-bg">
             <div className="w-full  max-w-7xl mx-auto flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold">
                     <span data-lang="en" className="hidden">

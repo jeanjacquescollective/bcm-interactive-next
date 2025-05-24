@@ -109,7 +109,7 @@ const BusinessModelCanvas: React.FC = () => {
     sessions.find((s) => s.id === selectedSessionId)?.lastModified ?? "";
   return (
     <>
-      <div className="w-full mx-auto mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-2 mt-5" >
+      <div className="col-span-4 row-start-2 container mx-auto px-4 max-w-8xl mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-2 mt-5" >
         {/* Session Selector and Name Editor */}
         <div className="flex items-center gap-2">
           {/* Session Dropdown */}
