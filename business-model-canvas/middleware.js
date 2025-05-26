@@ -14,7 +14,7 @@ function getLocale(request) {
 export function middleware(request) {
   // Check if there is any supported locale in the pathname
   const { pathname } = request.nextUrl
-  
+  console.log('Middleware pathname:', pathname)
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   )
@@ -33,7 +33,5 @@ export const config = {
   matcher: [
     // Skip all internal paths (_next)
     '/((?!_next).*)',
-    // Optional: only run on root (/) URL
-    '/'
   ],
 }

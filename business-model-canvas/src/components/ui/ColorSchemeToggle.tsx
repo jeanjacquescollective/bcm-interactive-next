@@ -28,7 +28,6 @@ const toggleDarkMode = (newState: boolean) => {
     setDarkMode(newState);
     if (newState) {
         setTheme("dark");
-
         document.body.setAttribute("data-theme", "dark");
     } else {
         setTheme("light");
@@ -40,16 +39,16 @@ const toggleDarkMode = (newState: boolean) => {
 if (darkMode === null) return null;
 
 return (
-    <>
-        <Icon.Sun className="mr-1" />
+    <div className="flex items-center gap-1">
+        <Icon.Sun className="mr-1" onClick={() => toggleDarkMode(false)} />
         <Toggle
             onToggle={toggleDarkMode}
             initialState={darkMode}
             colorOn="bg-gray-700"
             colorOff="bg-gray-300"
         />
-        <Icon.Moon className="ml-1" />
-    </>
+        <Icon.Moon className="ml-1" onClick={()=> toggleDarkMode(true)} />
+    </div>
 );
 };
 
