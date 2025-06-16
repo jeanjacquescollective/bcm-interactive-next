@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NoteList from "./NoteList";
 import { Note } from "@/types/CanvasSegment/NoteList";
 import NoteModal from "./NoteModal";
 import ConfirmModal from "./ConfirmModal";
 import QuestionsModal from "./QuestionsModal";
 import { CanvasData, CanvasSegmentData, SegmentItem } from "@/types/CanvasSession";
+import { useDroppable, useDraggable } from "@dnd-kit/core";
 
 interface CanvasSegmentProps {
     segmentTitle: string;
@@ -23,7 +24,7 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
         items: [],
         questions: [],
     };
-    console.log("Segment data:", segmentData);
+    // console.log("Segment data:", segmentData);
     if (!segmentData) {
         return <div className="text-center py-10">No data available</div>;
     }
@@ -34,11 +35,16 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
     const [editNote, setEditNote] = useState<Note | null>(null);
     const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
 
+    const { setNodeRef: setDroppableRef, isOver } = useDroppable({ id: segmentData.key });
+    console.log(`${segmentData.key} isOver:`, isOver);
     // Note form state
     const [noteTitle, setNoteTitle] = useState("");
     const [noteDescription, setNoteDescription] = useState("");
     const [noteColor, setNoteColor] = useState(COLORS[0]);
 
+    useEffect(() => {
+        setNotes(segmentItems); // re-sync when parent changes
+    }, [segmentItems]);
     // Handlers
     const handleExpand = (id: number) => {
         setExpandedNoteIds((ids) =>
@@ -98,6 +104,10 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
         setNoteDescription("");
         setNoteColor(COLORS[0]);
     }
+    const handleSortEnd = (newNotes: SegmentItem[]) => {
+        setNotes(newNotes);
+        handleSegmentChange(segmentData.key as keyof CanvasData, newNotes, segmentQuestions);
+    };
 
     return (
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full h-full box-border flex flex-col bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
@@ -112,16 +122,19 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
                     ?
                 </button>
             </div>
-
-            {/* Notes Section */}
-            <NoteList
-                notes={notes}
-                expandedNoteIds={expandedNoteIds}
-                onExpand={handleExpand}
-                onEdit={handleEdit}
-                onDelete={(id) => setConfirmDeleteId(id)}
-            />
-
+            <div ref={setDroppableRef} id={segmentData.key} className={`min-h-[100px] rounded transition-all ${isOver ? "bg-blue-100 dark:bg-blue-800" : ""
+                }`}>
+                {/* Notes Section */}
+                <NoteList
+                    notes={notes}
+                    expandedNoteIds={expandedNoteIds}
+                    onExpand={handleExpand}
+                    onEdit={handleEdit}
+                    onDelete={(id) => setConfirmDeleteId(id)}
+                    segmentKey={segmentData.key}
+                    onSortEnd={handleSortEnd}
+                />
+            </div>
             <QuestionsModal
                 open={showQuestions}
                 onClose={() => setShowQuestions(false)}

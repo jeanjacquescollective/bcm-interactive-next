@@ -11,4 +11,15 @@ export interface NoteListProps {
   onExpand: (id: number) => void;
   onEdit: (note: Note) => void;
   onDelete: (id: number) => void;
+  segmentKey: string; // Assuming segmentKey is a string identifier for the segment
+    onSortEnd: (newOrder: Note[]) => void;  // new prop
+}
+
+export interface NoteItemProps {
+  note: Note;
+  expandedNoteIds: number[];
+  onExpand: (id: number) => void;
+  onEdit: (note: Note) => void;
+  onDelete: (id: number) => void;
+  segmentKey: string; // Assuming segmentKey is a string identifier for the segment
 }
