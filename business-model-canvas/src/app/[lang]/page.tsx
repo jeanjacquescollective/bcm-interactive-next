@@ -30,6 +30,7 @@ export default async function Page({
         manageCanvasesText={dictionary.header.manageCanvasesText}
         helpText={dictionary.header.helpText}
       />
+      
     </div>
   );
 }

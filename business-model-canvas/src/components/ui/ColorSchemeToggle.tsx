@@ -4,7 +4,11 @@ import React, { useEffect, useState } from "react";
 import Toggle from "./Toggle";
 import { useTheme } from 'next-themes'
 
-const ColorSchemeToggle: React.FC = () => {
+interface ColorSchemeToggleProps {
+    sideBarOpen: boolean;
+}
+
+const ColorSchemeToggle: React.FC<ColorSchemeToggleProps> = ({sideBarOpen}) => {
     const [darkMode, setDarkMode] = useState<boolean | null>(null);
     const { theme, setTheme } = useTheme();
 
@@ -39,15 +43,18 @@ const toggleDarkMode = (newState: boolean) => {
 if (darkMode === null) return null;
 
 return (
-    <div className="flex items-center gap-1">
-        <Icon.Sun className="mr-1" onClick={() => toggleDarkMode(false)} />
-        <Toggle
-            onToggle={toggleDarkMode}
-            initialState={darkMode}
-            colorOn="bg-gray-700"
-            colorOff="bg-gray-300"
-        />
-        <Icon.Moon className="ml-1" onClick={()=> toggleDarkMode(true)} />
+    <div className="flex items-center gap-2 cursor-pointer" onClick={() => toggleDarkMode(!darkMode)}>
+        {!darkMode ? (
+            <>
+                <Icon.Moon />
+                {sideBarOpen && <span>Dark Mode</span>}
+            </>
+        ) : (
+            <>
+                <Icon.Sun />
+                {sideBarOpen && <span>Light Mode</span>}
+            </>
+        )}
     </div>
 );
 };

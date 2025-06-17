@@ -1,6 +1,6 @@
-import { ThemeProvider } from "next-themes";
-import "../globals.css";
 
+import "../globals.css";
+import { DndContext } from "@dnd-kit/core";
 export async function generateStaticParams() {
   return [{ lang: "en-US" }, { lang: "de" }];
 }
@@ -14,6 +14,10 @@ export const metadata = {
 };
 
 import { ReactNode } from "react";
+import Modals from "./modals/Modals";
+
+import { ManagedUIProvider } from "@/contexts/ManagedUI";
+
 
 export default async function RootLayout({
   children,
@@ -27,9 +31,11 @@ export default async function RootLayout({
   const { lang } = await params;
 
   return (
-    <>
+    <ManagedUIProvider>
+
       {children}
-      {modals}
-    </>
+        <Modals />
+    </ManagedUIProvider>
+
   );
 }

@@ -1,6 +1,6 @@
 "use client";   
 import React from "react";
-import SessionList from "../app/[lang]/@modals/SessionList";
+import SessionList from "../app/[lang]/modals/SessionList";
 
 
 

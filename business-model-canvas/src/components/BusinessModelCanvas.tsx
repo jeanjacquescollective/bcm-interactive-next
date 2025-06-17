@@ -4,6 +4,8 @@ import CanvasSegment from "./CanvasSegment/CanvasSegment";
 import { loadSessions, loadSession, saveSessions } from "@/app/actions/localStorage";
 import { CanvasData, CanvasSession } from "@/types/CanvasSession";
 import { DndContext, closestCenter } from "@dnd-kit/core";
+import CreateSessionButton from "./SessionManagement/CreateSessionButton";
+import DeleteSessionButton from "./SessionManagement/DeleteSessionButton";
 
 
 const EMPTY_CANVAS: CanvasData = {
@@ -33,6 +35,7 @@ const BusinessModelCanvas: React.FC = () => {
   const [canvasData, setCanvasData] = useState<CanvasData>(EMPTY_SESSION.data);
   const [loading, setLoading] = useState(true);
   const [COLORS, setCOLORS] = useState<string[]>([]);
+  const [openTimerModal, setOpenTimerModal] = useState(false);
 
   const noteIdToSegmentKey = React.useMemo(() => {
     const map: Record<string, keyof CanvasData> = {};
@@ -72,6 +75,25 @@ const BusinessModelCanvas: React.FC = () => {
     return <div className="text-center py-10">Loading...</div>;
   }
 
+  /**
+   * Handler for creating a new session.
+   */
+  const handleCreateSession = (name: string) => {
+    const newSession: CanvasSession = {
+      ...EMPTY_SESSION,
+      id: Date.now(),
+      name,
+      created: new Date().toISOString(),
+      lastModified: new Date().toISOString(),
+    };
+    setSessions(prev => {
+      const updated = [...prev, newSession];
+      saveSessions(updated);
+      return updated;
+    });
+    setSelectedSessionId(newSession.id);
+    setCanvasData(newSession.data);
+  };
 
 
   /**
@@ -143,7 +165,11 @@ const BusinessModelCanvas: React.FC = () => {
 
     const newCanvasData = { ...canvasData };
 
-    if (!destKey || !newCanvasData[destKey]) {
+    // Explicitly type destKey as keyof CanvasData for type safety
+    if (
+      !destKey ||
+      !(Object.keys(newCanvasData) as Array<keyof CanvasData>).includes(destKey as keyof CanvasData)
+    ) {
       console.log("Destination segment not found or invalid:", destKey);
       console.warn("Invalid or missing destination key. Defaulting to source.");
       return; // Don't do anything if the drop target is not recognized
@@ -172,10 +198,11 @@ const BusinessModelCanvas: React.FC = () => {
       };
     } else {
       // Moving between segments, append to destination
-      newCanvasData[destKey] = {
-        ...newCanvasData[destKey],
-        items: [...newCanvasData[destKey].items, note],
-        key: destKey,
+      const destKeyTyped = destKey as keyof CanvasData;
+      newCanvasData[destKeyTyped] = {
+        ...newCanvasData[destKeyTyped],
+        items: [...newCanvasData[destKeyTyped].items, note],
+        key: destKeyTyped,
       };
     }
 
@@ -227,6 +254,32 @@ const BusinessModelCanvas: React.FC = () => {
             placeholder="Session name"
             style={{ minWidth: 120 }}
           />
+          <DeleteSessionButton
+            onDelete={() => {
+              if (selectedSessionId !== null) {
+                setSessions(prev => {
+                  const updated = prev.filter(s => s.id !== selectedSessionId);
+                  saveSessions(updated);
+                  // Select another session or reset to empty
+                  if (updated.length > 0) {
+                    setSelectedSessionId(updated[0].id);
+                    setCanvasData(updated[0].data);
+                  } else {
+                    setSelectedSessionId(EMPTY_SESSION.id);
+                    setCanvasData(EMPTY_SESSION.data);
+                  }
+                  return updated;
+                });
+              }
+            }}
+            sessionName={sessions.find(s => s.id === selectedSessionId)?.name ?? ""}
+            disabled={sessions.length <= 1}
+          />
+        <CreateSessionButton
+          onCreate={handleCreateSession}
+   
+        />
+
         </div>
         {/* Last Modified Timestamp */}
         <span className="text-gray-500 dark:text-gray-400">
