@@ -9,17 +9,7 @@ interface ButtonProps {
 const Button: React.FC<ButtonProps> = ({ backgroundColor, text, onClick }) => (
     <button
         onClick={onClick}
-        style={{
-            backgroundColor,
-            color: '#fff',
-            border: 'none',
-            borderRadius: '999px',
-            padding: '0.5rem 1.5rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: 500,
-            transition: 'background 0.2s',
-        }}
+        className={`bg-[${backgroundColor}] text-white border-none rounded-full px-6 py-2 cursor-pointer text-base font-medium transition-colors duration-200`}
     >
         {text}
     </button>

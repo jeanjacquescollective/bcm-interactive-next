@@ -12,7 +12,7 @@ const CloseButton: React.FC<CloseButtonProps> = ({
     className = '',
 }) => (
     <div
-        className={`absolute top-2 right-2 cursor-pointer text-gray-400 hover:text-white text-3xl leading-none ${className}`}
+        className={`cursor-pointer text-gray-400 hover:text-white text-3xl leading-none ${className}`}
         onClick={onClose}
         title={title}
         role="button"

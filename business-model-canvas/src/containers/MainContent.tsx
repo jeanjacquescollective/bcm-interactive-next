@@ -1,11 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import CanvasSegment from "./CanvasSegment/CanvasSegment";
 import { loadSessions, loadSession, saveSessions } from "@/app/actions/localStorage";
 import { CanvasData, CanvasSession } from "@/types/CanvasSession";
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import CreateSessionButton from "./SessionManagement/CreateSessionButton";
-import DeleteSessionButton from "./SessionManagement/DeleteSessionButton";
+import SessionToolbar from "@components/SessionManagement/SessionToolbar";
+import CanvasBoard from "@/components/CanvasBoard";
+
 
 
 const EMPTY_CANVAS: CanvasData = {
@@ -29,7 +28,7 @@ const EMPTY_SESSION = {
   data: EMPTY_CANVAS,
 };
 
-const BusinessModelCanvas: React.FC = () => {
+const MainContent: React.FC = () => {
   const [sessions, setSessions] = useState<CanvasSession[]>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<number | null>(EMPTY_SESSION.id);
   const [canvasData, setCanvasData] = useState<CanvasData>(EMPTY_SESSION.data);
@@ -228,115 +227,25 @@ const BusinessModelCanvas: React.FC = () => {
 
   return (
     <>
-      <div className="col-span-4 row-start-2 container mx-auto px-4 max-w-8xl mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-2 mt-5" >
-        {/* Session Selector and Name Editor */}
-        <div className="flex items-center gap-2">
-          {/* Session Dropdown */}
-          <select
-            className="border px-2 py-1 rounded"
-            value={selectedSessionId ?? ""}
-            onChange={e => setSelectedSessionId(Number(e.target.value))}
-          >
-            {sessions.map(session => (
-              <option key={session.id} value={session.id}>
-                {session.name}
-              </option>
-            ))}
-          </select>
-          {/* Session Name Input */}
-          <input
-            className="border px-2 py-1 rounded"
-            type="text"
-            value={
-              sessions.find(s => s.id === selectedSessionId)?.name ?? ""
-            }
-            onChange={e => handleSessionNameChange(e.target.value)}
-            placeholder="Session name"
-            style={{ minWidth: 120 }}
-          />
-          <DeleteSessionButton
-            onDelete={() => {
-              if (selectedSessionId !== null) {
-                setSessions(prev => {
-                  const updated = prev.filter(s => s.id !== selectedSessionId);
-                  saveSessions(updated);
-                  // Select another session or reset to empty
-                  if (updated.length > 0) {
-                    setSelectedSessionId(updated[0].id);
-                    setCanvasData(updated[0].data);
-                  } else {
-                    setSelectedSessionId(EMPTY_SESSION.id);
-                    setCanvasData(EMPTY_SESSION.data);
-                  }
-                  return updated;
-                });
-              }
-            }}
-            sessionName={sessions.find(s => s.id === selectedSessionId)?.name ?? ""}
-            disabled={sessions.length <= 1}
-          />
-        <CreateSessionButton
-          onCreate={handleCreateSession}
-   
-        />
-
-        </div>
-        {/* Last Modified Timestamp */}
-        <span className="text-gray-500 dark:text-gray-400">
-          Saved: {getLastModified()}
-        </span>
-      </div>
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <div className="w-full mx-auto p-4 rounded-lg shadow-md bg-gray-50 dark:bg-gray-900">
-          <div className="flex flex-col md:flex-row shadow gap-2 bg-gray-100 dark:bg-gray-800">
-            <div className="flex flex-col flex-[1_1_0%] rounded shadow-sm bg-white dark:bg-gray-900">
-              <CanvasSegment segmentTitle="Key Partners" segmentData={canvasData.keyPartners} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
-            </div>
-            <div className="flex flex-col flex-[1_1_0%] gap-2">
-              <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
-                <CanvasSegment segmentTitle="Key Activities" segmentData={canvasData.keyActivities} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
-              </div>
-              <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
-                <CanvasSegment segmentTitle="Key Resources" segmentData={canvasData.keyResources} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
-              </div>
-            </div>
-            <div className="flex flex-col flex-[2_2_0%] rounded shadow-sm bg-white dark:bg-gray-900">
-              <CanvasSegment segmentTitle="Value Propositions" segmentData={canvasData.valuePropositions} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
-            </div>
-            <div className="flex flex-col flex-[1_1_0%] gap-2">
-              <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
-                <CanvasSegment segmentTitle="Customer Relationships" segmentData={canvasData.customerRelationships} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
-              </div>
-              <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
-                <CanvasSegment segmentTitle="Channels" segmentData={canvasData.channels} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
-              </div>
-            </div>
-            <div className="flex flex-col flex-[1_1_0%] rounded shadow-sm bg-white dark:bg-gray-900">
-              <CanvasSegment segmentTitle="Customer Segments" segmentData={canvasData.customerSegments} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
-            </div>
-          </div>
-          <div className="flex p-4 shadow gap-2 bg-gray-100 dark:bg-gray-800">
-            <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
-              <CanvasSegment segmentTitle="Cost Structure" segmentData={canvasData.costStructure} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
-            </div>
-            <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
-              <CanvasSegment segmentTitle="Revenue Streams" segmentData={canvasData.revenueStreams} COLORS={COLORS} handleSegmentChange={handleSegmentChange} />
-            </div>
-          </div>
-          <div className="flex p-4 shadow gap-2 bg-gray-100 dark:bg-gray-800">
-            <div className="flex-1 rounded shadow-sm flex flex-col bg-white dark:bg-gray-900">
-              <CanvasSegment
-                segmentTitle="Brainstorm Area"
-                segmentData={canvasData.brainStormArea}
-                COLORS={COLORS}
-                handleSegmentChange={handleSegmentChange}
-              />
-            </div>
-          </div>
-        </div>
-      </DndContext>
+      <SessionToolbar
+        sessions={sessions}
+        selectedSessionId={selectedSessionId}
+        setSelectedSessionId={setSelectedSessionId}
+        setSessions={setSessions}
+        setCanvasData={setCanvasData}
+        handleSessionNameChange={handleSessionNameChange}
+        handleCreateSession={handleCreateSession}
+        getLastModified={getLastModified}
+        EMPTY_SESSION={EMPTY_SESSION}
+      />
+      <CanvasBoard
+        canvasData={canvasData}
+        COLORS={COLORS}
+        handleSegmentChange={handleSegmentChange}
+        handleDragEnd={handleDragEnd}
+      />
     </>
   );
 };
 
-export default BusinessModelCanvas;
+export default MainContent;

@@ -1,7 +1,8 @@
-import BusinessModelCanvas from "@/components/BusinessModelCanvas";
+import BusinessModelCanvas from "@/components/CanvasBoard";
 import Header from "@/components/containers/Header";
 import Sidebar from "@/components/containers/Sidebar";
 import { getDictionary } from "./dictionaries";
+import MainContent from "@/containers/MainContent";
 
 export const metadata = {
   title: "Business Model Canvas",
@@ -23,8 +24,8 @@ export default async function Page({
   return (
     <div className="grid grid-rows-[auto_1fr_auto] grid-cols-5 min-h-screen max-h-screen overflow-y-auto">
       <Header />
-      <main className="col-span-5 container mx-auto px-4 max-w-8xl">
-        <BusinessModelCanvas />
+      <main className="col-span-5 container mx-auto px-4">
+        <MainContent />
       </main>
       <Sidebar
         manageCanvasesText={dictionary.header.manageCanvasesText}

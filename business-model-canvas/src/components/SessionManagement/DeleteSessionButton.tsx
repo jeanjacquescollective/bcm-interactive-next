@@ -55,47 +55,25 @@ const DeleteSessionButton: React.FC<DeleteSessionButtonProps> = ({
             </button>
             {showModal && (
                 <div
-                    style={{
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        width: "100vw",
-                        height: "100vh",
-                        background: "rgba(0,0,0,0.3)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        zIndex: 1000,
-                    }}
+                    className="fixed inset-0 bg-black bg-opacity-5 flex items-center justify-center z-[1000]"
                 >
                     <div
-                        style={{
-                            background: "#fff",
-                            padding: "24px",
-                            borderRadius: "8px",
-                            minWidth: "300px",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "16px",
-                        }}
+                        className="p-6 border rounded-lg min-w-[300px] shadow-lg flex flex-col gap-4"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="delete-session-modal-title"
                     >
-                        <div id="delete-session-modal-title" style={{ fontWeight: "bold" }}>
+                        <div id="delete-session-modal-title" className="font-bold">
                             Are you sure you want to delete {sessionName ? `"${sessionName}"` : "this session"}?
                         </div>
-                        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
+                        <div className="flex justify-end gap-2">
                             <Button
                                 onClick={handleCancel}
-                                backgroundColor="#bdbdbd"
-                                text="Cancel"
-                            />
+                                text="Cancel" backgroundColor={""}                            />
                             <Button
                                 onClick={handleConfirm}
-                                backgroundColor="#d32f2f"
                                 text="Delete"
+                                backgroundColor="#d32f2f"
                             />
                         </div>
                     </div>

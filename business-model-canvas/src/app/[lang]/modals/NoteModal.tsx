@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "./Modal";
+import Modal from "../../../components/ui/DefaultModal";
 
 interface NoteModalProps {
   open: boolean;
@@ -22,27 +22,30 @@ const NoteModal: React.FC<NoteModalProps> = ({
   onSave,
   title,
   noteTitle,
-  setNoteTitle,
   noteDescription,
-  setNoteDescription,
   noteColor,
-  setNoteColor,
   colors,
   disabled,
-}) => (
-  <Modal open={open} onClose={onClose} title={title}>
+  
+}) => {
+
+  const [currentNoteColor, setCurrentNoteColor] = React.useState(noteColor || colors[0]);
+  const [currentNoteTitle, setCurrentNoteTitle] = React.useState(noteTitle || "");
+  const [currentNoteDescription, setCurrentNoteDescription] = React.useState(noteDescription || "");
+  console.log("NoteModal currentNoteColor:", currentNoteColor);
+  return <Modal open={open} onClose={onClose} title={title}>
     <div className="space-y-3">
       <input
         className="w-full border rounded px-2 py-1"
         placeholder="Title"
-        value={noteTitle}
-        onChange={(e) => setNoteTitle(e.target.value)}
+        value={currentNoteTitle}
+        onChange={(e) => setCurrentNoteTitle(e.target.value)}
       />
       <textarea
         className="w-full border rounded px-2 py-1"
         placeholder="Description"
-        value={noteDescription}
-        onChange={(e) => setNoteDescription(e.target.value)}
+        value={currentNoteDescription}
+        onChange={(e) => setCurrentNoteDescription(e.target.value)}
         rows={3}
       />
       <div className="flex gap-2 items-center">
@@ -50,9 +53,9 @@ const NoteModal: React.FC<NoteModalProps> = ({
         {colors.map((color) => (
           <button
             key={color}
-            className={`w-6 h-6 rounded-full border-2 ${noteColor === color ? "border-black" : "border-transparent"}`}
+            className={`w-6 h-6 rounded-full border-2 ${currentNoteColor === color ? "border-black" : "border-transparent"}`}
             style={{ background: color }}
-            onClick={() => setNoteColor(color)}
+            onClick={() => setCurrentNoteColor(color)}
             type="button"
           />
         ))}
@@ -76,6 +79,6 @@ const NoteModal: React.FC<NoteModalProps> = ({
       </div>
     </div>
   </Modal>
-);
+};
 
 export default NoteModal;
