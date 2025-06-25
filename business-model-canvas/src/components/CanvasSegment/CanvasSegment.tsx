@@ -124,9 +124,10 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
                     expandedNoteIds={expandedNoteIds}
                     onExpand={handleExpand}
                     onEdit={handleEdit}
-                    onDelete={(id) => setConfirmDeleteId(id)}
+                    onDelete={handleDelete}
                     segmentKey={segmentData.key}
                     onSortEnd={handleSortEnd}
+
                 />
             </div>
             {/* <QuestionsModal

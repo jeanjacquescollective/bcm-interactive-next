@@ -8,7 +8,7 @@ import CanvasBoard from "@/components/CanvasBoard";
 import { EMPTY_SESSION } from "@/lib/actions/sessionActions";
 import { SessionService } from "@/lib/services/sessionService";
 import { localStorageProvider } from "@/lib/storage/client/localStorage";
-import { CanvasUI, CanvasUIProvider } from "@/contexts/CanvasUI";
+import { CanvasUIProvider } from "@/contexts/CanvasUI";
 
 const sessionService = new SessionService(localStorageProvider);
 
@@ -40,7 +40,14 @@ const MainContent: React.FC = () => {
   }, []);
 
   const initializeSessions = useCallback(async () => {
-    const loadedSessions = await sessionService.getAll();
+    let loadedSessions = await sessionService.getAll();
+
+    // If no sessions exist, create a default one
+    if (loadedSessions.length === 0) {
+      const defaultSession = await sessionService.add("default session");
+      loadedSessions = defaultSession;
+    }
+
     setSessions(loadedSessions);
 
     const urlSessionId = new URL(window.location.href).searchParams.get("sessionId");
@@ -55,6 +62,7 @@ const MainContent: React.FC = () => {
     } else {
       setSelectedSessionId(EMPTY_SESSION.id?.toString() ?? null);
       setCanvasData(EMPTY_SESSION.data);
+      updateURLWithSessionId(null);
     }
 
     setLoading(false);
@@ -123,50 +131,49 @@ const MainContent: React.FC = () => {
     };
     handleSessionUpdate({ data: newCanvasData });
   };
+const handleDragEnd = (event: { active: any; over: any }) => {
+  const { active, over } = event;
+  if (!over) return;
 
-  const handleDragEnd = (event: { active: any; over: any }) => {
-    const { active, over } = event;
-    if (!over) return;
+  const noteId = active.id;
+  const sourceKey = noteIdToSegmentKey[noteId];
+  const isOverNote = noteIdToSegmentKey.hasOwnProperty(over.id);
+  const destKey: keyof CanvasData = isOverNote ? noteIdToSegmentKey[over.id] : over.id;
 
-    const noteId = active.id;
-    const sourceKey = noteIdToSegmentKey[noteId];
-    const destKey = over.id as keyof CanvasData;
+  if (!sourceKey || !destKey || !canvasData[sourceKey]) return;
 
-    if (!sourceKey || !canvasData[sourceKey]) return;
+  const note = canvasData[sourceKey].items.find((n) => n.id === noteId);
+  if (!note) return;
 
-    const note = canvasData[sourceKey].items.find((n) => n.id === noteId);
-    if (!note) return;
+  const updatedCanvasData = { ...canvasData };
 
-    const updatedCanvasData = { ...canvasData };
-
-    // Remove from source
-    updatedCanvasData[sourceKey] = {
-      ...updatedCanvasData[sourceKey],
-      items: updatedCanvasData[sourceKey].items.filter((n) => n.id !== noteId),
-    };
-
-    if (sourceKey === destKey) {
-      const reordered = [...canvasData[sourceKey].items];
-      const oldIndex = reordered.findIndex((n) => n.id === noteId);
-      const newIndex = reordered.findIndex((n) => n.id === over.id);
-
-      reordered.splice(oldIndex, 1);
-      reordered.splice(newIndex, 0, note);
-
-      updatedCanvasData[sourceKey] = {
-        ...updatedCanvasData[sourceKey],
-        items: reordered,
-      };
-    } else if (updatedCanvasData[destKey]) {
-      updatedCanvasData[destKey] = {
-        ...updatedCanvasData[destKey],
-        items: [...updatedCanvasData[destKey].items, note],
-      };
-    }
-
-    setCanvasData(updatedCanvasData);
-    handleSessionUpdate({ data: updatedCanvasData });
+  // Remove from source
+  const sourceItems = [...updatedCanvasData[sourceKey].items];
+  const oldIndex = sourceItems.findIndex((n) => n.id === noteId);
+  sourceItems.splice(oldIndex, 1);
+  updatedCanvasData[sourceKey] = {
+    ...updatedCanvasData[sourceKey],
+    items: sourceItems,
   };
+
+  // Same list: reorder
+  if (sourceKey === destKey) {
+    const newIndex = sourceItems.findIndex((n) => n.id === over.id);
+    const insertAt = newIndex === -1 ? oldIndex : newIndex;
+
+    sourceItems.splice(insertAt, 0, note);
+    updatedCanvasData[sourceKey].items = sourceItems;
+  } else {
+    // Cross-list drop
+    const destItems = [...updatedCanvasData[destKey].items];
+    destItems.push(note); // Could support finer insert placement here
+    updatedCanvasData[destKey].items = destItems;
+  }
+
+  setCanvasData(updatedCanvasData);
+  handleSessionUpdate({ data: updatedCanvasData });
+};
+
 
   const handleSessionNameChange = (newName: string) => {
     setSessions((prev) =>
@@ -202,12 +209,12 @@ const MainContent: React.FC = () => {
         EMPTY_SESSION={EMPTY_SESSION}
       />
       <CanvasUIProvider>
-      <CanvasBoard
-        canvasData={canvasData}
-        COLORS={COLORS}
-        handleSegmentChange={handleSegmentChange}
-        handleDragEnd={handleDragEnd}
-      />
+        <CanvasBoard
+          canvasData={canvasData}
+          COLORS={COLORS}
+          handleSegmentChange={handleSegmentChange}
+          handleDragEnd={handleDragEnd}
+        />
       </CanvasUIProvider>
     </>
   );

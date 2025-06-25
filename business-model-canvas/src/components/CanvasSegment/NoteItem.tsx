@@ -3,6 +3,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import DragHandle from "@/components/ui/DragHandle";
 import { NoteItemProps } from "@/types/CanvasSegment/NoteList";
+import { useTheme } from "next-themes";
+import { ArrowDown, ArrowUp, Edit, Trash2 } from "react-feather";
 
 const NoteItem: React.FC<NoteItemProps> = ({
   note,
@@ -11,31 +13,22 @@ const NoteItem: React.FC<NoteItemProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { theme } = useTheme();
   const isExpanded = expandedNoteIds.includes(note.id);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: note.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: note.id });
 
   const style = useMemo<React.CSSProperties>(() => {
     const bgColor =
       typeof note.color === "object"
-        ? window.matchMedia?.("(prefers-color-scheme: dark)").matches
+        ? theme === "dark"
           ? note.color.dark
           : note.color.light
         : note.color;
 
     return {
       background: bgColor,
-      color: "#fff",
-      boxShadow: isDragging
-        ? "0 0 10px rgba(0,0,0,0.5)"
-        : "0 1px 4px rgba(0,0,0,0.3)",
+      boxShadow: isDragging ? "0 0 10px rgba(0,0,0,0.5)" : "0 1px 4px rgba(0,0,0,0.3)",
       transform: CSS.Transform.toString(transform),
       transition,
       opacity: isDragging ? 0.8 : 1,
@@ -43,29 +36,27 @@ const NoteItem: React.FC<NoteItemProps> = ({
       padding: 12,
       borderRadius: 8,
     };
-  }, [note.color, isDragging, transform, transition]);
+  }, [note.color, isDragging, transform, transition, theme]);
 
-  const handleExpand = () => onExpand(note.id);
-  const handleEdit = () => onEdit(note);
-  const handleDelete = () => onDelete(note.id);
+  const textColorClass = theme === "dark" ? "text-white" : "text-gray-900";
 
   return (
     <div
-      className="rounded-md p-3 mb-3 flex items-start dark:shadow dark:border dark:border-gray-700"
       ref={setNodeRef}
-      style={style}
       {...attributes}
+      style={style}
+      className={`flex items-start rounded-md mb-3 ${textColorClass}`}
     >
       <DragHandle listeners={listeners} />
 
       {note.description && (
         <button
-          className="mr-2 mt-0.5 bg-transparent border-0 text-white text-base"
-          onClick={handleExpand}
+          onClick={() => onExpand(note.id)}
           aria-label={isExpanded ? "Collapse note" : "Expand note"}
           type="button"
+          className="mr-2 mt-0.5 bg-transparent border-0 text-base"
         >
-          {isExpanded ? "▼" : "▶"}
+          {isExpanded ? <ArrowUp size={18} /> : <ArrowDown size={18} />}
         </button>
       )}
 
@@ -75,22 +66,23 @@ const NoteItem: React.FC<NoteItemProps> = ({
       </div>
 
       <button
-        className="ml-2 bg-transparent border-0 text-white text-base"
-        onClick={handleEdit}
+        onClick={() => onEdit(note)}
         title="Edit"
         type="button"
         aria-label="Edit note"
+        className="ml-2 bg-transparent border-0 text-base"
       >
-        ✎
+        <Edit size={18} />
       </button>
+
       <button
-        className="ml-1 bg-transparent border-0 text-red-300 text-base"
-        onClick={handleDelete}
+        onClick={() => onDelete(note.id)}
         title="Delete"
         type="button"
         aria-label="Delete note"
+        className="ml-2 bg-transparent border-0 text-red-600 dark:text-red-300 text-base"
       >
-        🗑
+        <Trash2 size={18} />
       </button>
     </div>
   );
