@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "../ui/DefaultModal";
+import Modal from "../modals/DefaultModal";
 
 interface QuestionsModalProps {
   open: boolean;

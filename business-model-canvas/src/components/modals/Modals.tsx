@@ -6,7 +6,8 @@ import HelpModal from './Help';
 import { ManagedUI } from "@/contexts/ManagedUI";
 import TimerModal from './TimerModal';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
-import NoteModal from './NoteModal';
+import NoteModal from './canvasboard/NoteModal';
+import { Note } from '@/types/CanvasSegment/NoteList';
 
 
 const Modals: React.FC = () => {
@@ -15,6 +16,7 @@ const Modals: React.FC = () => {
     const { openBrainstormModal, setOpenBrainstormModal } = managedUI || {};
     const { openNoteModal, setOpenNoteModal } = managedUI || {};
     const [position, setPosition] = useState({ x: 100, y: 100 });
+    const currentNote = managedUI?.currentNote || null;
 
     const handleDragEnd = (event: DragEndEvent) => {
         if (event.active.id === "timer-modal" && event.delta) {
@@ -33,26 +35,6 @@ const Modals: React.FC = () => {
         }
     };
 
-    const onSaveNote = (title: string, description: string, color: string) => {
-        // if (managedUI && managedUI.setCurrentNote) {
-        //     managedUI.setCurrentNote({
-        //         title,
-        //         description,
-        //         color,
-        //     });
-        // }
-        // closeModal();
-        
-        closeModal();
-    }
-
-    const onCancelNote = () => {
-        // if (managedUI && managedUI.setCurrentNote) {
-        //     managedUI.setCurrentNote(null);
-        // }
-        closeModal();
-    }
-
 
 
 
@@ -62,26 +44,20 @@ const Modals: React.FC = () => {
     }
     return (
         <>
-        <DndContext onDragEnd={handleDragEnd}>
-            {/* {activeModal === 'helpModal' && (
+            <DndContext onDragEnd={handleDragEnd}>
+                {/* {activeModal === 'helpModal' && (
             <HelpModal onClose={closeModal} />
             )}
             {activeModal === 'noteEditor' && (
             <NoteEditor onClose={closeModal} />
             )} */}
-            {openTimerModal && (
-                <TimerModal
-                    onClose={() => setOpenTimerModal && setOpenTimerModal(false)} position={position}
-                />
-            )}
-        </DndContext>
-        {openNoteModal && (<NoteModal onClose={closeModal} open={true} onSave={() => onSaveNote('', '', '')} title={'Add Note'} noteTitle={''} setNoteTitle={function (v: string): void {
-                throw new Error('Function not implemented.');
-            } } noteDescription={''} setNoteDescription={function (v: string): void {
-                throw new Error('Function not implemented.');
-            } } noteColor={''} setNoteColor={function (v: string): void {
-                throw new Error('Function not implemented.');
-            } } colors={[]} />)}   
+                {openTimerModal && (
+                    <TimerModal
+                        onClose={() => setOpenTimerModal && setOpenTimerModal(false)} position={position}
+                    />
+                )}
+            </DndContext>
+           
         </>
     );
 };

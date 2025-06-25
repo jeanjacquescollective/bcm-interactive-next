@@ -14,28 +14,27 @@ export const metadata = {
 };
 
 import { ReactNode } from "react";
-import Modals from "./modals/Modals";
+import Modals from "@components/modals/Modals";
 
 import { ManagedUIProvider } from "@/contexts/ManagedUI";
 
 
 export default async function RootLayout({
   children,
-  modals,
   params,
 }: {
   children: ReactNode;
-  modals: ReactNode;
   params: Promise<{ lang: "en-US" | "de" }>;
 }) {
   const { lang } = await params;
 
   return (
-    <ManagedUIProvider>
 
-      {children}
+      <ManagedUIProvider>
+
+        {children}
         <Modals />
-    </ManagedUIProvider>
+      </ManagedUIProvider>
 
   );
 }

@@ -1,15 +1,13 @@
 import React from "react";
-import CloseButton from "./CloseButton";
+import CloseButton from "../ui/CloseButton";
 
 interface ModalProps {
-  open: boolean;
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ open, onClose, title, children }) => {
-  if (!open) return null;
+const Modal: React.FC<ModalProps> = ({ onClose, title, children }) => {
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg max-w-md w-full p-6 relative">

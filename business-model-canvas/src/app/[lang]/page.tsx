@@ -1,6 +1,6 @@
 import BusinessModelCanvas from "@/components/CanvasBoard";
-import Header from "@/components/containers/Header";
-import Sidebar from "@/components/containers/Sidebar";
+import Header from "@/containers/Header";
+import Sidebar from "@/containers/Sidebar";
 import { getDictionary } from "./dictionaries";
 import MainContent from "@/containers/MainContent";
 

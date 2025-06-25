@@ -8,7 +8,7 @@ import { fetchSegmentQuestions, isSupabaseAvailable } from '@/services/supebaseS
  * @param {string|null} userId - Optional user ID for personalized questions
  * @returns {Promise<string[]>} - Array of questions
  */
-export async function getSegmentQuestions(segment, userId = null) {
+export async function getSegmentQuestions(segment: string | number, userId = null) {
   // First try Supabase if it's available
   if (isSupabaseAvailable()) {
     const supabaseQuestions = await fetchSegmentQuestions(segment, userId);

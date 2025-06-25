@@ -1,28 +1,25 @@
 import React, { useContext, useEffect, useState } from "react";
 import NoteList from "./NoteList";
 import { Note } from "@/types/CanvasSegment/NoteList";
-import NoteModal from "../../app/[lang]/modals/NoteModal";
-import ConfirmModal from "../ui/ConfirmModal";
+import ConfirmModal from "@components/modals/ConfirmModal";
 import QuestionsModal from "./QuestionsModal";
 import { CanvasData, CanvasSegmentData, SegmentItem } from "@/types/CanvasSession";
-import { useDroppable, useDraggable } from "@dnd-kit/core";
-import { ManagedUI } from "@/contexts/ManagedUI";
+import { useDroppable } from "@dnd-kit/core";
+import { CanvasUI } from "@/contexts/CanvasUI";
 
 interface CanvasSegmentProps {
     segmentTitle: string;
     segmentData: CanvasSegmentData;
-    COLORS: string[];
     handleSegmentChange: (segmentKey: keyof CanvasData, items: SegmentItem[], questions: string[]) => void;
 }
 
 const CanvasSegment: React.FC<CanvasSegmentProps> = ({
     segmentTitle,
     segmentData,
-    COLORS,
     handleSegmentChange,
 }) => {
-        const managedUI = useContext(ManagedUI);
-    
+    const canvasUI = useContext(CanvasUI);
+
     const { items: segmentItems, questions: segmentQuestions } = segmentData || {
         items: [],
         questions: [],
@@ -32,89 +29,78 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
         return <div className="text-center py-10">No data available</div>;
     }
     const [notes, setNotes] = useState<SegmentItem[]>(segmentData.items || []);
-    const [expandedNoteIds, setExpandedNoteIds] = useState<number[]>([]);
+    const [expandedNoteIds, setExpandedNoteIds] = useState<string[]>([]);
     const [showQuestions, setShowQuestions] = useState(false);
-    const [editNote, setEditNote] = useState<Note | null>(null);
-    const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+    const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
     const { setNodeRef: setDroppableRef, isOver } = useDroppable({ id: segmentData.key });
-    console.log(`${segmentData.key} isOver:`, isOver);
-    // Note form state
-    const [noteTitle, setNoteTitle] = useState("");
-    const [noteDescription, setNoteDescription] = useState("");
-    const [noteColor, setNoteColor] = useState(COLORS[0]);
+
 
     useEffect(() => {
         setNotes(segmentItems); // re-sync when parent changes
     }, [segmentItems]);
     // Handlers
-    const handleExpand = (id: number) => {
+    const handleExpand = (id: string) => {
         setExpandedNoteIds((ids) =>
             ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id]
         );
     };
 
     const handleEdit = (note: Note) => {
-        setEditNote(note);
-        setNoteTitle(note.title);
-        setNoteDescription(note.description);
-        setNoteColor(note.color);
-        managedUI?.setCurrentNote(note);
-        console.log("Editing note:", note);
-        managedUI?.setOpenNoteModal(true);
+        canvasUI?.setCurrentNote(note);
+        canvasUI?.setSegmentKey(segmentData.key as keyof CanvasData);
+        canvasUI?.setOpenNoteModal(true);
     };
 
-    const handleDelete = (id: number) => {
+    const handleDelete = (id: string) => {
         const updatedNotes = notes.filter((n) => n.id !== id);
         setNotes(updatedNotes);
         handleSegmentChange(segmentData.key as keyof CanvasData, updatedNotes, segmentQuestions);
         setConfirmDeleteId(null);
     };
 
-    const handleSaveNote = () => {
-        let updatedNotes: SegmentItem[];
-        if (editNote) {
-            updatedNotes = notes.map((n) =>
-                n.id === editNote.id
-                    ? { ...n, title: noteTitle, description: noteDescription, color: noteColor }
-                    : n
-            );
-        } else {
-            updatedNotes = [
-                ...notes,
-                {
-                    id: Date.now(),
-                    title: noteTitle,
-                    description: noteDescription,
-                    color: noteColor,
-                },
-            ];
-        }
-        setNotes(updatedNotes);
-        console.log("Updated notes:", segmentData);
-        handleSegmentChange(segmentData.key as keyof CanvasData, updatedNotes, segmentQuestions);
-        resetNoteForm();
-    };
+    // const handleSaveNote = () => {
+    //     let updatedNotes: SegmentItem[];
+    //     if (editNote) {
+    //         updatedNotes = notes.map((n) =>
+    //             n.id === editNote.id
+    //                 ? { ...n, title: noteTitle, description: noteDescription, color: noteColor }
+    //                 : n
+    //         );
+    //     } else {
+    //         updatedNotes = [
+    //             ...notes,
+    //             {
+    //                 id: Date.now(),
+    //                 title: noteTitle,
+    //                 description: noteDescription,
+    //                 color: noteColor,
+    //             },
+    //         ];
+    //     }
+    //     setNotes(updatedNotes);
+    //     console.log("Updated notes:", segmentData);
+    //     handleSegmentChange(segmentData.key as keyof CanvasData, updatedNotes, segmentQuestions);
+    //     resetNoteForm();
+    // };
 
 
-    function resetNoteForm() {
-        setEditNote(null);
-        setNoteTitle("");
-        setNoteDescription("");
-        setNoteColor(COLORS[0]);
-    }
+    // function resetNoteForm() {
+    //     setEditNote(null);
+    //     setNoteTitle("");
+    //     setNoteDescription("");
+    //     setNoteColor(COLORS[0]);
+    // }
     const handleSortEnd = (newNotes: SegmentItem[]) => {
         setNotes(newNotes);
         handleSegmentChange(segmentData.key as keyof CanvasData, newNotes, segmentQuestions);
     };
 
-     const handleAddNote = () => {
-        console.log("Note button clicked");
-        if (managedUI) {
-            managedUI.setCurrentNote(null); // Reset current note
-            managedUI.setOpenNoteModal(true);
-            console.log("Opening note modal");
-        }
+    const handleAddNote = () => {
+        canvasUI?.setCurrentNote(null);
+        canvasUI?.setSegmentKey(segmentData.key as keyof CanvasData);
+        canvasUI?.setOpenNoteModal(true);
+
     };
 
     return (
@@ -143,11 +129,11 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
                     onSortEnd={handleSortEnd}
                 />
             </div>
-            <QuestionsModal
+            {/* <QuestionsModal
                 open={showQuestions}
                 onClose={() => setShowQuestions(false)}
                 questions={segmentQuestions}
-            />
+            /> */}
 
             {/* <NoteModal
                 open={showNoteModal}
@@ -166,14 +152,14 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
                 colors={COLORS}
                 disabled={!noteTitle.trim()}
             /> */}
-
+            {/* TODO: go to modals */}
+{/* 
             <ConfirmModal
-                open={confirmDeleteId !== null}
                 onClose={() => setConfirmDeleteId(null)}
                 onConfirm={() => confirmDeleteId !== null && handleDelete(confirmDeleteId)}
                 title="Delete Note"
                 message="Are you sure you want to delete this note?"
-            />
+            /> */}
 
             {/* Add Note Button */}
             <button

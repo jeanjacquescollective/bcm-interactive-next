@@ -1,50 +1,68 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { loadSessions, loadSession, saveSessions } from "@/app/actions/localStorage";
+
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { CanvasData, CanvasSession } from "@/types/CanvasSession";
 import SessionToolbar from "@components/SessionManagement/SessionToolbar";
 import CanvasBoard from "@/components/CanvasBoard";
 
+import { EMPTY_SESSION } from "@/lib/actions/sessionActions";
+import { SessionService } from "@/lib/services/sessionService";
+import { localStorageProvider } from "@/lib/storage/client/localStorage";
+import { CanvasUI, CanvasUIProvider } from "@/contexts/CanvasUI";
 
-
-const EMPTY_CANVAS: CanvasData = {
-  keyPartners: { items: [], questions: [], key: "keyPartners" },
-  keyActivities: { items: [], questions: [], key: "keyActivities" },
-  keyResources: { items: [], questions: [], key: "keyResources" },
-  valuePropositions: { items: [], questions: [], key: "valuePropositions" },
-  customerRelationships: { items: [], questions: [], key: "customerRelationships" },
-  channels: { items: [], questions: [], key: "channels" },
-  customerSegments: { items: [], questions: [], key: "customerSegments" },
-  costStructure: { items: [], questions: [], key: "costStructure" },
-  revenueStreams: { items: [], questions: [], key: "revenueStreams" },
-  brainStormArea: { items: [], questions: [], key: "brainStormArea" },
-};
-
-const EMPTY_SESSION = {
-  id: 0,
-  name: "Untitled Canvas",
-  created: new Date().toISOString(),
-  lastModified: new Date().toISOString(),
-  data: EMPTY_CANVAS,
-};
+const sessionService = new SessionService(localStorageProvider);
 
 const MainContent: React.FC = () => {
   const [sessions, setSessions] = useState<CanvasSession[]>([]);
-  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(EMPTY_SESSION.id);
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [canvasData, setCanvasData] = useState<CanvasData>(EMPTY_SESSION.data);
   const [loading, setLoading] = useState(true);
   const [COLORS, setCOLORS] = useState<string[]>([]);
-  const [openTimerModal, setOpenTimerModal] = useState(false);
 
-  const noteIdToSegmentKey = React.useMemo(() => {
+  const noteIdToSegmentKey = useMemo(() => {
     const map: Record<string, keyof CanvasData> = {};
-    Object.entries(canvasData).forEach(([segmentKey, segment]) => {
-      segment.items.forEach((note: { id: string | number }) => {
+    for (const [segmentKey, segment] of Object.entries(canvasData)) {
+      for (const note of segment.items) {
         map[note.id] = segmentKey as keyof CanvasData;
-      });
-    });
+      }
+    }
     return map;
   }, [canvasData]);
+
+  const updateURLWithSessionId = useCallback((id: string | null) => {
+    const url = new URL(window.location.href);
+    if (id) {
+      url.searchParams.set("sessionId", id);
+    } else {
+      url.searchParams.delete("sessionId");
+    }
+    window.history.replaceState({}, "", url.toString());
+  }, []);
+
+  const initializeSessions = useCallback(async () => {
+    const loadedSessions = await sessionService.getAll();
+    setSessions(loadedSessions);
+
+    const urlSessionId = new URL(window.location.href).searchParams.get("sessionId");
+    const session = urlSessionId
+      ? loadedSessions.find((s) => s.id?.toString() === urlSessionId)
+      : loadedSessions[0];
+
+    if (session) {
+      setSelectedSessionId(session.id?.toString() ?? null);
+      setCanvasData(session.data);
+      updateURLWithSessionId(session.id?.toString() ?? null);
+    } else {
+      setSelectedSessionId(EMPTY_SESSION.id?.toString() ?? null);
+      setCanvasData(EMPTY_SESSION.data);
+    }
+
+    setLoading(false);
+  }, [updateURLWithSessionId]);
+
+  useEffect(() => {
+    initializeSessions();
+  }, [initializeSessions]);
 
   useEffect(() => {
     fetch("/api/colors")
@@ -54,86 +72,57 @@ const MainContent: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const loadedSessions = loadSessions();
-    setSessions(loadedSessions);
-    if (loadedSessions.length > 0) {
-      setSelectedSessionId(loadedSessions[0].id);
-      setCanvasData(loadedSessions[0].data);
+    const session = sessions.find((s) => s.id?.toString() === selectedSessionId);
+    if (session) {
+      setCanvasData(session.data);
     }
-    console.log("Loaded sessions:", loadedSessions);
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (!selectedSessionId) return;
-    const session = loadSession(sessions, selectedSessionId);
-    if (session) setCanvasData(session.data);
   }, [selectedSessionId, sessions]);
 
-  if (loading) {
-    return <div className="text-center py-10">Loading...</div>;
-  }
-
-  /**
-   * Handler for creating a new session.
-   */
-  const handleCreateSession = (name: string) => {
-    const newSession: CanvasSession = {
-      ...EMPTY_SESSION,
-      id: Date.now(),
-      name,
-      created: new Date().toISOString(),
-      lastModified: new Date().toISOString(),
-    };
-    setSessions(prev => {
-      const updated = [...prev, newSession];
-      saveSessions(updated);
-      return updated;
-    });
-    setSelectedSessionId(newSession.id);
+  const handleSessionCreate = async (name: string) => {
+    const updated = await sessionService.add(name);
+    setSessions(updated);
+    const newSession = updated[updated.length - 1];
+    const newId = newSession.id?.toString() ?? null;
+    setSelectedSessionId(newId);
     setCanvasData(newSession.data);
+    updateURLWithSessionId(newId);
   };
 
-
-  /**
-   * Unified handler for updating session data or name.
-   */
-  const handleSessionUpdate = (options: { newData?: CanvasData; newName?: string }) => {
-    console.log("Updating session with options:", options);
-    setSessions(prevSessions => {
-      const updatedSessions = prevSessions.map(session => {
-        if (session.id === selectedSessionId) {
-          return {
-            ...session,
-            data: options.newData ?? session.data,
-            name: options.newName ?? session.name,
-            lastModified: new Date().toISOString(),
-          };
-        }
-        return session;
-      });
-      saveSessions(updatedSessions);
-      // If canvas data was updated, update local state as well
-      if (options.newData) setCanvasData(options.newData);
-      return updatedSessions;
-    });
+  const handleSessionUpdate = async (options: { data?: CanvasData; name?: string }) => {
+    if (!selectedSessionId) return;
+    const updated = await sessionService.update(selectedSessionId, options);
+    setSessions(updated);
+    if (options.data) setCanvasData(options.data);
+    updateURLWithSessionId(selectedSessionId);
   };
 
-  /**
-   * Handler for when a note is added, removed, or edited in a segment.
-   */
-  const handleSegmentChange = (segmentKey: keyof CanvasData, items: any[], questions: string[]) => {
-    const newCanvasData = {
+  const handleSessionDelete = async (id: string) => {
+    const updated = await sessionService.delete(id);
+    setSessions(updated);
+
+    const nextSession = updated[0] ?? EMPTY_SESSION;
+    const nextId = nextSession.id?.toString() ?? null;
+
+    setSelectedSessionId(nextId);
+    setCanvasData(nextSession.data);
+    updateURLWithSessionId(nextId);
+  };
+
+  const handleSegmentChange = (
+    segmentKey: keyof CanvasData,
+    items: any[],
+    questions: string[]
+  ) => {
+    const newCanvasData: CanvasData = {
       ...canvasData,
       [segmentKey]: {
+        key: segmentKey,
         items,
         questions,
-        key: segmentKey,
       },
     };
-    handleSessionUpdate({ newData: newCanvasData });
+    handleSessionUpdate({ data: newCanvasData });
   };
-
 
   const handleDragEnd = (event: { active: any; over: any }) => {
     const { active, over } = event;
@@ -141,109 +130,85 @@ const MainContent: React.FC = () => {
 
     const noteId = active.id;
     const sourceKey = noteIdToSegmentKey[noteId];
-    let destKey = over.id;
+    const destKey = over.id as keyof CanvasData;
 
-    if (
-      !destKey ||
-      destKey === "undefined" ||
-      typeof destKey === "number"
-    ) {
-      destKey = noteIdToSegmentKey[over.id]; // Default to source if over is not defined or destKey is a number
-    }
+    if (!sourceKey || !canvasData[sourceKey]) return;
 
-    if (!sourceKey) {
-      console.error("Could not find source segment for note ID:", noteId);
-      return;
-    }
+    const note = canvasData[sourceKey].items.find((n) => n.id === noteId);
+    if (!note) return;
 
-    const note = canvasData[sourceKey]?.items.find((n) => n.id === noteId);
-    if (!note) {
-      console.error("Note not found in source segment", sourceKey, noteId);
-      return;
-    }
+    const updatedCanvasData = { ...canvasData };
 
-    const newCanvasData = { ...canvasData };
-
-    // Explicitly type destKey as keyof CanvasData for type safety
-    if (
-      !destKey ||
-      !(Object.keys(newCanvasData) as Array<keyof CanvasData>).includes(destKey as keyof CanvasData)
-    ) {
-      console.log("Destination segment not found or invalid:", destKey);
-      console.warn("Invalid or missing destination key. Defaulting to source.");
-      return; // Don't do anything if the drop target is not recognized
-    }
-
-    // Remove note from source
-    newCanvasData[sourceKey] = {
-      ...newCanvasData[sourceKey],
-      items: newCanvasData[sourceKey].items.filter((n) => n.id !== noteId),
+    // Remove from source
+    updatedCanvasData[sourceKey] = {
+      ...updatedCanvasData[sourceKey],
+      items: updatedCanvasData[sourceKey].items.filter((n) => n.id !== noteId),
     };
 
-    // Insert note into destination
     if (sourceKey === destKey) {
-      // Sorting within the same list
-      const oldIndex = canvasData[sourceKey].items.findIndex((n) => n.id === noteId);
-      const newIndex = canvasData[sourceKey].items.findIndex((n) => n.id === over.id);
-
       const reordered = [...canvasData[sourceKey].items];
-      reordered.splice(oldIndex, 1); // remove old position
-      reordered.splice(newIndex, 0, note); // insert at new position
+      const oldIndex = reordered.findIndex((n) => n.id === noteId);
+      const newIndex = reordered.findIndex((n) => n.id === over.id);
 
-      newCanvasData[sourceKey] = {
-        ...newCanvasData[sourceKey],
+      reordered.splice(oldIndex, 1);
+      reordered.splice(newIndex, 0, note);
+
+      updatedCanvasData[sourceKey] = {
+        ...updatedCanvasData[sourceKey],
         items: reordered,
-        key: sourceKey,
       };
-    } else {
-      // Moving between segments, append to destination
-      const destKeyTyped = destKey as keyof CanvasData;
-      newCanvasData[destKeyTyped] = {
-        ...newCanvasData[destKeyTyped],
-        items: [...newCanvasData[destKeyTyped].items, note],
-        key: destKeyTyped,
+    } else if (updatedCanvasData[destKey]) {
+      updatedCanvasData[destKey] = {
+        ...updatedCanvasData[destKey],
+        items: [...updatedCanvasData[destKey].items, note],
       };
     }
 
-    setCanvasData(newCanvasData);
-    handleSessionUpdate({ newData: newCanvasData });
-
-    // optional: force re-render
-    setTimeout(() => {
-      setCanvasData({ ...newCanvasData });
-    }, 0);
+    setCanvasData(updatedCanvasData);
+    handleSessionUpdate({ data: updatedCanvasData });
   };
 
-  /**
-   * Handler for when the session name changes.
-   */
   const handleSessionNameChange = (newName: string) => {
-    handleSessionUpdate({ newName });
+    setSessions((prev) =>
+      prev.map((s) =>
+        s.id?.toString() === selectedSessionId ? { ...s, name: newName } : s
+      )
+    );
+    handleSessionUpdate({ name: newName });
+  };
+
+  const handleSelectedSessionChange = (id: string | null) => {
+    setSelectedSessionId(id);
+    updateURLWithSessionId(id);
   };
 
   const getLastModified = () =>
-    sessions.find((s) => s.id === selectedSessionId)?.lastModified ?? "";
+    sessions.find((s) => s.id?.toString() === selectedSessionId)?.lastModified ?? "";
 
+  if (loading) return <div className="text-center py-10">Loading...</div>;
 
   return (
     <>
       <SessionToolbar
         sessions={sessions}
         selectedSessionId={selectedSessionId}
-        setSelectedSessionId={setSelectedSessionId}
+        setSelectedSessionId={handleSelectedSessionChange}
         setSessions={setSessions}
         setCanvasData={setCanvasData}
         handleSessionNameChange={handleSessionNameChange}
-        handleCreateSession={handleCreateSession}
+        handleSessionCreate={handleSessionCreate}
+        handleSessionDelete={handleSessionDelete}
         getLastModified={getLastModified}
         EMPTY_SESSION={EMPTY_SESSION}
       />
+      <CanvasUIProvider>
       <CanvasBoard
         canvasData={canvasData}
         COLORS={COLORS}
         handleSegmentChange={handleSegmentChange}
         handleDragEnd={handleDragEnd}
       />
+      </CanvasUIProvider>
     </>
   );
 };

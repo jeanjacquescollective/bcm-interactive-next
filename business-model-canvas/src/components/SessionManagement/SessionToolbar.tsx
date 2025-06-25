@@ -6,12 +6,13 @@ import { CanvasSession } from "@/types/CanvasSession";
 
 interface SessionToolbarProps {
     sessions: CanvasSession[];
-    selectedSessionId: number | null;
-    setSelectedSessionId: (id: number) => void;
+    selectedSessionId: string | null;
+    setSelectedSessionId: (id: string | null) => void;
     setSessions: (updater: (prev: CanvasSession[]) => CanvasSession[]) => void;
     setCanvasData: (data: any) => void;
     handleSessionNameChange: (newName: string) => void;
-    handleCreateSession: (name: string) => void;
+    handleSessionCreate: (name: string) => void;
+    handleSessionDelete: (id: string) => void;
     getLastModified: () => string;
     EMPTY_SESSION: CanvasSession;
 }
@@ -23,18 +24,58 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
     setSessions,
     setCanvasData,
     handleSessionNameChange,
-    handleCreateSession,
+    handleSessionCreate,
+    handleSessionDelete,
     getLastModified,
     EMPTY_SESSION,
 }) => {
     const inputRef = useRef<HTMLInputElement | null>(null);
 
-    // Autofocus on name input when session changes
     useEffect(() => {
-        if (inputRef.current) {
-            inputRef.current.focus();
-        }
+        inputRef.current?.focus();
     }, [selectedSessionId]);
+
+    const getSelectedSession = () =>
+        sessions.find((s) => s.id != null && s.id.toString() === selectedSessionId);
+
+    const handleSessionSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedSessionId(e.target.value);
+    };
+
+    const handleSessionNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleSessionNameChange(e.target.value);
+    };
+
+    const handleDelete = () => {
+        if (!selectedSessionId) return;
+        handleSessionDelete(selectedSessionId);
+        setSessions((prev) => {
+            const updated = prev.filter(
+                (s) => s.id != null && s.id.toString() !== selectedSessionId
+            );
+
+            if (updated.length > 0) {
+                const firstSession = updated[0];
+                setSelectedSessionId(firstSession.id?.toString() ?? null);
+                setCanvasData(firstSession.data);
+            } else {
+                setSelectedSessionId(EMPTY_SESSION.id?.toString() ?? null);
+                setCanvasData(EMPTY_SESSION.data);
+            }
+
+            return updated;
+        });
+
+    };
+
+    const renderSessionOptions = () =>
+        sessions.map((session) => (
+            <option key={session.id?.toString()} value={session.id?.toString()}>
+                {session.name || "Untitled Session"}
+            </option>
+        ));
+
+    const selectedSession = getSelectedSession();
 
     return (
         <div className="sticky top-0 z-20 container mx-auto max-w-8xl flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
@@ -44,58 +85,34 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
                     Session:
                 </label>
 
-                {/* Dropdown First */}
                 <select
                     id="session-select"
                     className="border px-2 py-1 rounded bg-white dark:bg-gray-800"
                     value={selectedSessionId ?? ""}
-                    onChange={(e) => setSelectedSessionId(Number(e.target.value))}
+                    onChange={handleSessionSelectChange}
                     aria-label="Select session"
                 >
-                    {sessions.map((session) => (
-                        <option key={session.id} value={session.id}>
-                            {session.name}
-                        </option>
-                    ))}
+                    {renderSessionOptions()}
                 </select>
 
-                {/* Editable Session Name */}
                 <input
                     ref={inputRef}
                     className="border px-2 py-1 rounded"
                     type="text"
-                    value={sessions.find((s) => s.id === selectedSessionId)?.name ?? ""}
-                    onChange={(e) => handleSessionNameChange(e.target.value)}
+                    value={selectedSession?.name ?? ""}
+                    onChange={handleSessionNameInputChange}
                     placeholder="Session name"
                     aria-label="Edit session name"
                     style={{ minWidth: 120 }}
                 />
 
-                {/* Delete Current */}
                 <DeleteSessionButton
-                    onDelete={() => {
-                        if (selectedSessionId !== null) {
-                            setSessions((prev) => {
-                                const updated = prev.filter((s) => s.id !== selectedSessionId);
-                                if (updated.length > 0) {
-                                    setSelectedSessionId(updated[0].id);
-                                    setCanvasData(updated[0].data);
-                                } else {
-                                    setSelectedSessionId(EMPTY_SESSION.id);
-                                    setCanvasData(EMPTY_SESSION.data);
-                                }
-                                return updated;
-                            });
-                        }
-                    }}
-                    sessionName={
-                        sessions.find((s) => s.id === selectedSessionId)?.name ?? ""
-                    }
+                    onDelete={handleDelete}
+                    sessionName={selectedSession?.name ?? ""}
                     disabled={sessions.length <= 1}
                 />
 
-                {/* Create New */}
-                <CreateSessionButton onCreate={handleCreateSession} />
+                <CreateSessionButton onCreate={handleSessionCreate} />
             </div>
 
             {/* Right: Saved Timestamp */}
@@ -103,7 +120,6 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
                 Saved: {getLastModified()}
             </div>
         </div>
-
     );
 };
 

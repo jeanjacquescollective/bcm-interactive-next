@@ -1,9 +1,9 @@
 // Types
 export interface SegmentItem {
-    id: number;
+    id: string;
     title: string;
     description: string;
-    color: string;
+    color: { light: string; dark: string } ; 
 }
 
 export interface CanvasSegmentData {
@@ -25,7 +25,7 @@ export interface CanvasData {
 }
 
 export interface CanvasSession {
-    id: number;
+    id: string | (() => string | null) | null;
     name: string;
     created: string;
     lastModified: string;

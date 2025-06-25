@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Clock, MoreVertical } from "react-feather";
 import { useDraggable } from "@dnd-kit/core";
 import CloseButton from "@/components/ui/CloseButton";
+import DragHandle from "../ui/DragHandle";
 
 const formatTime = (seconds: number) => {
   const m = Math.floor(seconds / 60).toString().padStart(2, "0");
@@ -20,7 +21,7 @@ const TimerModal: React.FC<{
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
+  const { listeners, transform, isDragging } =
     useDraggable({ id: "timer-modal" });
 
   useEffect(() => {
@@ -67,14 +68,9 @@ const TimerModal: React.FC<{
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         {/* Drag handle (MoreVertical as grip) */}
-        <div
-          ref={setNodeRef}
-          {...listeners}
-          {...attributes}
-          className="cursor-move p-1 rounded hover:bg-gray-800"
-        >
-          <MoreVertical className="w-5 h-5 text-gray-400" />
-        </div>
+        <DragHandle
+          listeners={listeners}
+        />
 
         {/* Clock icon (larger) */}
         <Clock className="w-8 h-8 text-white" />

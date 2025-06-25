@@ -1,8 +1,7 @@
 import React from "react";
-import Modal from "../../../components/ui/DefaultModal";
+import Modal from "@components/modals/DefaultModal";
 
 interface ConfirmModalProps {
-  open: boolean;
   onClose: () => void;
   onConfirm: () => void;
   title?: string;
@@ -10,14 +9,12 @@ interface ConfirmModalProps {
 }
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({
-  open,
   onClose,
   onConfirm,
   title = "Are you sure?",
   message = "Are you sure you want to proceed?",
 }) => (
-  <Modal open={open} onClose={onClose} title={title}>
-    <div>
+  <Modal onClose={onClose} title={title}>
       <p>{message}</p>
       <div className="flex justify-end gap-2 mt-4">
         <button
@@ -35,7 +32,6 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
           Delete
         </button>
       </div>
-    </div>
   </Modal>
 );
 

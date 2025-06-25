@@ -15,7 +15,7 @@ const supabase = supabaseUrl && supabaseKey
  * @param {string|null} userId - Optional user ID for personalized questions
  * @returns {Promise<string[]>} - Array of questions
  */
-export async function fetchSegmentQuestions(segment, userId = null) {
+export async function fetchSegmentQuestions(segment: string | number, userId = null) {
   if (!supabase) {
     console.warn('Supabase client not initialized. Using fallback questions.');
     return null;

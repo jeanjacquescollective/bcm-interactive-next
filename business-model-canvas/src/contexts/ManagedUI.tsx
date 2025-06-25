@@ -1,5 +1,6 @@
 "use client";
 import { Note } from "@/types/CanvasSegment/NoteList";
+import { CanvasData } from "@/types/CanvasSession";
 import { createContext, useState, Dispatch, SetStateAction, ReactNode } from "react";
 
 // Define the context type
@@ -12,6 +13,8 @@ interface ManagedUIContextType {
     setOpenBrainstormModal: Dispatch<SetStateAction<boolean>>;
     currentNote: Note | null;
     setCurrentNote: Dispatch<SetStateAction<Note | null>>;
+    segmentKey: keyof CanvasData | null;
+    setSegmentKey: (k: keyof CanvasData | null) => void;
 }
 
 // Defining context with proper type
@@ -23,7 +26,8 @@ export function ManagedUIProvider({ children }: { children: ReactNode }) {
     const [openNoteModal, setOpenNoteModal] = useState(false);
     const [openBrainstormModal, setOpenBrainstormModal] = useState(false);
     const [currentNote, setCurrentNote] = useState<Note | null>(null);
-    
+    const [segmentKey, setSegmentKey] = useState<keyof CanvasData | null>(null);
+
     return (
         <ManagedUI.Provider
             value={{
@@ -35,6 +39,8 @@ export function ManagedUIProvider({ children }: { children: ReactNode }) {
                 setOpenBrainstormModal,
                 currentNote,
                 setCurrentNote,
+                segmentKey,
+                setSegmentKey,
             }}
         >
             {children}

@@ -1,25 +1,25 @@
 export type Note = {
-  id: number;
+  id: string;
   title: string;
   description: string;
-  color: string;
+  color: { light: string; dark: string }; // Color can be an object or a string
 };
 
 export interface NoteListProps {
   notes: Note[];
-  expandedNoteIds: number[];
-  onExpand: (id: number) => void;
+  expandedNoteIds: string[];
+  onExpand: (id: string) => void;
   onEdit: (note: Note) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
   segmentKey: string; // Assuming segmentKey is a string identifier for the segment
     onSortEnd: (newOrder: Note[]) => void;  // new prop
 }
 
 export interface NoteItemProps {
   note: Note;
-  expandedNoteIds: number[];
-  onExpand: (id: number) => void;
+  expandedNoteIds: string[];
+  onExpand: (id: string ) => void;
   onEdit: (note: Note) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
   segmentKey: string; // Assuming segmentKey is a string identifier for the segment
 }

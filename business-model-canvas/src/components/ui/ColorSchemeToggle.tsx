@@ -1,7 +1,6 @@
 "use client";
 import * as Icon from 'react-feather';
 import React, { useEffect, useState } from "react";
-import Toggle from "./Toggle";
 import { useTheme } from 'next-themes'
 
 interface ColorSchemeToggleProps {
