@@ -1,7 +1,10 @@
 import Link from "next/link";
 import "./globals.css";
 import Footer from "@/containers/Footer";
+
 export default function HomePage() {
+  // No params available on the root page, so no language check needed here
+
   return (
     <div className="flex flex-col bg-gray-100 dark:bg-gray-900 min-h-screen">
       <header className="shadow p-4">

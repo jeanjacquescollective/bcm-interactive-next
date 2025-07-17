@@ -1,7 +1,7 @@
 
 import "../globals.css";
 export async function generateStaticParams() {
-  return [{ lang: "en-US" }, { lang: "de" }];
+  return [{ lang: "en-US" }, { lang: "nl" }];
 }
 
 export const metadata = {
@@ -22,7 +22,6 @@ export default async function RootLayout({
   children,
 }: {
   children: ReactNode;
-  params: Promise<{ lang: "en-US" | "nl" }>;
 }) {
   // const { lang } = await params;
 

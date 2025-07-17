@@ -13,12 +13,12 @@ export default async function Page({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  const supportedLangs = ["en", "nl"];
+  const supportedLangs = ["en-US", "nl"];
   if (!supportedLangs.includes(lang)) {
     // Optionally, you can redirect or show a 404/error page here
     throw new Error(`Unsupported locale: ${lang}`);
   }
-  const dictionary = await getDictionary(lang as "en" | "nl");
+  const dictionary = await getDictionary(lang as "en-US" | "nl");
   return (
     <div className="relative min-h-screen max-h-screen overflow-y-auto">
       {/* <Header /> */}

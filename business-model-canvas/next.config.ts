@@ -10,6 +10,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // i18n: {
+  //   locales: ['en-US', 'nl'],   // Add your supported locales here
+  //   defaultLocale: 'en',
+  // },
   
 }
 
