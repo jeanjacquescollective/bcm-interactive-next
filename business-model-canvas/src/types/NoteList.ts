@@ -1,5 +1,5 @@
 export type Note = {
-  id: string;
+  id: string | undefined;
   title: string;
   description: string;
   color: { light: string; dark: string }; // Color can be an object or a string
@@ -13,6 +13,7 @@ export interface NoteListProps {
   onDelete: (id: string) => void;
   segmentKey: string; // Assuming segmentKey is a string identifier for the segment
     onSortEnd: (newOrder: Note[]) => void;  // new prop
+  showDragHandle?: boolean; // Optional prop to control drag handle visibility
 }
 
 export interface NoteItemProps {
@@ -22,4 +23,5 @@ export interface NoteItemProps {
   onEdit: (note: Note) => void;
   onDelete: (id: string) => void;
   segmentKey: string; // Assuming segmentKey is a string identifier for the segment
+  showDragHandle?: boolean; // Optional prop to control drag handle visibility
 }

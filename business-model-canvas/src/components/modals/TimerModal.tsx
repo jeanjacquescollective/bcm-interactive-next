@@ -63,36 +63,37 @@ const TimerModal: React.FC<{
   return (
     <div
       style={style}
-      className="bg-gray-900 rounded-lg shadow-lg p-6 w-full max-w-xs"
+      className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 w-full max-w-xs"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         {/* Drag handle (MoreVertical as grip) */}
         <DragHandle
           listeners={listeners}
+          showDragHandle={true}
         />
 
         {/* Clock icon (larger) */}
-        <Clock className="w-8 h-8 text-white" />
+        <Clock className="w-8 h-8 text-gray-900 dark:text-white" />
 
         {/* Close button */}
         <CloseButton onClose={onClose} title="Close Timer" />
       </div>
 
       <div className="flex flex-col items-center select-none">
-        <div className="text-4xl font-mono mb-4">{formatTime(seconds)}</div>
+        <div className="text-4xl font-mono mb-4 text-gray-900 dark:text-white">{formatTime(seconds)}</div>
 
         {/* Time adjustment buttons */}
         <div className="flex gap-2 mb-4">
           <button
-            className="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700 transition"
+            className="px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-900 dark:text-white"
             disabled={running}
             onClick={() => setSeconds((s) => Math.min(MAX_TIME, s + 60))}
           >
             +1 min
           </button>
           <button
-            className="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700 transition"
+            className="px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-900 dark:text-white"
             disabled={running}
             onClick={() => setSeconds((s) => Math.min(MAX_TIME, s + 300))}
           >
@@ -103,13 +104,13 @@ const TimerModal: React.FC<{
         {/* Start/Pause & Reset */}
         <div className="flex gap-2">
           <button
-            className="px-4 py-1 bg-green-700 rounded hover:bg-green-600 transition"
+            className="px-4 py-1 bg-green-700 dark:bg-green-700 rounded hover:bg-green-600 dark:hover:bg-green-600 transition text-white"
             onClick={() => setRunning((r) => !r)}
           >
             {running ? "Pause" : "Start"}
           </button>
           <button
-            className="px-4 py-1 bg-gray-700 rounded hover:bg-gray-600 transition"
+            className="px-4 py-1 bg-gray-300 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition text-gray-900 dark:text-white"
             onClick={() => {
               setRunning(false);
               setSeconds(0);

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { NoteListProps } from "@/types/CanvasSegment/NoteList";
+import { NoteListProps } from "@/types/NoteList";
 import NoteItem from "./NoteItem";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { arrayMove } from "@dnd-kit/sortable";
@@ -11,7 +11,7 @@ const NoteList: React.FC<NoteListProps> = ({
   onEdit,
   onDelete,
   segmentKey,
-  onSortEnd
+  onSortEnd,
 }) => {
 
   const handleDragEnd = (event: any) => {

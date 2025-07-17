@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import DragHandle from "@/components/ui/DragHandle";
-import { NoteItemProps } from "@/types/CanvasSegment/NoteList";
+import { NoteItemProps } from "@/types/NoteList";
 import { useTheme } from "next-themes";
 import { ArrowDown, ArrowUp, Edit, Trash2 } from "react-feather";
 
@@ -17,6 +17,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const isExpanded = expandedNoteIds.includes(note.id);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: note.id });
+
+
 
   const style = useMemo<React.CSSProperties>(() => {
     const bgColor =
@@ -45,9 +47,11 @@ const NoteItem: React.FC<NoteItemProps> = ({
       ref={setNodeRef}
       {...attributes}
       style={style}
-      className={`flex items-start rounded-md mb-3 ${textColorClass}`}
+      className={`flex items-start rounded-md mb-3 ${textColorClass} note-item`}
+      data-testid={`note-item-${note.id}`}
+      
     >
-      <DragHandle listeners={listeners} />
+      <DragHandle listeners={listeners}  />
 
       {note.description && (
         <button

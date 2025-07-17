@@ -78,10 +78,10 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
     const selectedSession = getSelectedSession();
 
     return (
-        <div className="sticky top-0 z-20 container mx-auto max-w-8xl flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
+        <div className="sticky top-0 z-20 w-full flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
             {/* Left: Session Controls */}
             <div className="flex items-center gap-2 flex-wrap">
-                <label htmlFor="session-select" className="text-sm text-gray-300">
+                <label htmlFor="session-select" className="text-sm">
                     Session:
                 </label>
 

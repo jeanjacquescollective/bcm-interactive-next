@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
+import Footer from "@/containers/Footer";
 export default function HomePage() {
   return (
     <div className="flex flex-col bg-gray-100 dark:bg-gray-900 min-h-screen">
@@ -31,6 +32,7 @@ export default function HomePage() {
           </div>
         </div>
       </main>
+      <Footer></Footer>
     </div>
   );
 }

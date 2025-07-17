@@ -1,121 +1,77 @@
 "use client";
-import React, { useState, useMemo } from "react";
+
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useContext,
+  Suspense,
+} from "react";
+import dynamic from "next/dynamic";
 import {
-  Activity,
-  Share2,
-  Download,
-  Upload,
   EyeOff,
+  Eye,
   Globe,
   HelpCircle,
 } from "react-feather";
-import ColorSchemeToggle from "../components/ui/ColorSchemeToggle";
-import TimerButton from "../components/ui/TimerButton";
+import SidebarToggleButton from "@/components/sidebar/SidebarToggleButton";
+import Tooltip from "@/components/ui/Tooltip";
+import SidebarButton from "@/components/sidebar/SidebarButton";
+import SidebarFooter from "@/components/sidebar/SidebarFooter";
+import ColorSchemeToggle from "@/components/ui/ColorSchemeToggle";
+import { ManagedUI } from "@/contexts/ManagedUI";
+import { CanvasData } from "@/types/CanvasSession";
 
-type HeaderProps = { manageCanvasesText: string; helpText: string };
+// Only dynamically load dropdowns (offscreen and conditional)
+const ExportDropdown = dynamic(() => import("@/components/sidebar/ExportDropdown"), {
+  ssr: false,
+});
+const ImportDropdown = dynamic(() => import("@/components/sidebar/ImportDropdown"), {
+  ssr: false,
+});
 
-const SidebarButton: React.FC<{
-  icon: React.ReactNode;
-  label: string;
-  sideBarOpen: boolean;
-  onClick?: () => void;
-  className?: string;
-  ariaLabel?: string;
-}> = ({ icon, label, sideBarOpen, onClick, className = "", ariaLabel }) => (
-  <button
-    className={`flex items-center w-full px-3 py-2 rounded-lg hover:bg-gray-800 transition ${className}`}
-    onClick={onClick}
-    aria-label={ariaLabel || label}
-    type="button"
-  >
-    {icon}
-    <span
-      className={`ml-3 transition-all duration-200 ${
-        sideBarOpen
-          ? "opacity-100 ml-3"
-          : "opacity-0 ml-0 w-0 overflow-hidden pointer-events-none"
-      }`}
-    >
-      {label}
-    </span>
-  </button>
-);
+// Eagerly load above-the-fold UI buttons
+import TimerButton from "@/components/ui/TimerButton";
+import BrainstormButton from "@/components/ui/BrainstormButton";
 
-const ExportDropdown: React.FC<{ sideBarOpen: boolean }> = ({ sideBarOpen }) => {
-  const [open, setOpen] = useState(false);
-  const toggleOpen = () => setOpen((v) => !v);
-  return (
-    <li
-      className="relative"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
-      <SidebarButton
-        icon={<Download className="w-5 h-5 mr-0" />}
-        label="Export"
-        sideBarOpen={sideBarOpen}
-        onClick={toggleOpen}
-        ariaLabel="Toggle export options"
-      />
-      {open && sideBarOpen && (
-        <div className="absolute left-full top-0 ml-2 bg-gray-800 rounded shadow-lg p-2 min-w-[100px] z-50">
-          {["PDF", "JPG", "CSV", "JSON"].map((format) => (
-            <button
-              key={format}
-              className="block px-2 py-1 hover:bg-gray-700 w-full text-left rounded"
-              type="button"
-            >
-              {format}
-            </button>
-          ))}
-        </div>
-      )}
-    </li>
-  );
+type HeaderProps = {
+  manageCanvasesText: string;
+  helpText: string;
 };
 
-const ImportDropdown: React.FC<{ sideBarOpen: boolean }> = ({ sideBarOpen }) => {
-  const [open, setOpen] = useState(false);
-  const toggleOpen = () => setOpen((v) => !v);
-  return (
-    <li
-      className="relative"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
-      <SidebarButton
-        icon={<Upload className="w-5 h-5 mr-0" />}
-        label="Import"
-        sideBarOpen={sideBarOpen}
-        onClick={toggleOpen}
-        ariaLabel="Toggle import options"
-      />
-      {open && sideBarOpen && (
-        <div className="absolute left-full top-0 ml-2 bg-gray-800 rounded shadow-lg p-2 min-w-[100px] z-50">
-          {["CSV", "JSON"].map((format) => (
-            <button
-              key={format}
-              className="block px-2 py-1 hover:bg-gray-700 w-full text-left rounded"
-              type="button"
-            >
-              {format}
-            </button>
-          ))}
-        </div>
-      )}
-    </li>
-  );
-};
-
-const Sidebar: React.FC<HeaderProps> = (props) => {
+const Sidebar: React.FC<HeaderProps> = ({ helpText }) => {
+  const managedUI = useContext(ManagedUI);
   const [sideBarOpen, setSideBarOpen] = useState(false);
-  // Language label depends on pathname
-  const languageLabel = useMemo(() => {
-    if (typeof window === "undefined") return "Language";
-    return window.location.pathname.startsWith("/nl") ? "English" : "Nederlands";
+  const [hoveredDropdown, setHoveredDropdown] = useState<"export" | "import" | null>(null);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("sidebar-open");
+    if (stored) setSideBarOpen(stored === "true");
   }, []);
 
-  const handleLanguageChange = () => {
+  useEffect(() => {
+    localStorage.setItem("sidebar-open", sideBarOpen.toString());
+  }, [sideBarOpen]);
+
+  const setDropdownHovered = useCallback((type: "export" | "import") => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setHoveredDropdown(type);
+  }, []);
+
+  const clearDropdownHovered = useCallback(() => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredDropdown(null);
+    }, 200);
+  }, []);
+
+  const getLanguageLabel = () => {
+    if (typeof window === "undefined") return "Language";
+    return window.location.pathname.startsWith("/nl") ? "English" : "Nederlands";
+  };
+
+  const handleLanguageChange = useCallback(() => {
     if (typeof window === "undefined") return;
     const currentPath = window.location.pathname;
     if (currentPath.startsWith("/nl")) {
@@ -125,17 +81,55 @@ const Sidebar: React.FC<HeaderProps> = (props) => {
     } else {
       window.location.pathname = "/en" + currentPath;
     }
+  }, []);
+
+  const segmentOptions: Array<{ key: keyof CanvasData; label: string }> = [
+    { key: "keyPartners", label: "Key Partners" },
+    { key: "keyActivities", label: "Key Activities" },
+    { key: "keyResources", label: "Key Resources" },
+    { key: "valuePropositions", label: "Value Propositions" },
+    { key: "customerRelationships", label: "Customer Relationships" },
+    { key: "channels", label: "Channels" },
+    { key: "customerSegments", label: "Customer Segments" },
+    { key: "costStructure", label: "Cost Structure" },
+    { key: "revenueStreams", label: "Revenue Streams" },
+    { key: "brainStormArea", label: "Brainstorm Area" },
+  ];
+
+  const handleFocusModeToggle = useCallback(() => {
+    console.log("Toggling focus mode");
+    if (managedUI?.focusedSegment) {
+      // If already in focus mode, exit it
+      managedUI.setFocusedSegment(null);
+    } else {
+      // Enter focus mode - start with first segment
+      managedUI?.setFocusedSegment(segmentOptions[0].key);
+    }
+    console.log("Focus mode toggled:", managedUI?.focusedSegment);
+  }, [managedUI]);
+
+  const getFocusButtonLabel = () => {
+    if (managedUI?.focusedSegment) {
+      const segment = segmentOptions.find(s => s.key === managedUI.focusedSegment);
+      return `Focus: ${segment?.label || "Active"}`;
+    }
+    return "Focus Mode";
+  };
+
+  const getFocusButtonIcon = () => {
+    return managedUI?.focusedSegment ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />;
   };
 
   return (
     <aside
       id="sidebar"
-      className={`fixed top-0 left-0 h-screen bg-gray-900 text-white shadow-2xl z-40 flex flex-col transition-all duration-300 ${
+      className={`fixed top-0 left-0 h-screen text-white shadow-2xl z-40 flex flex-col transition-all duration-300 box-border ${
         sideBarOpen ? "w-72" : "w-20"
-      }`}
+      } bg-[rgba(30,30,40,0.7)] backdrop-blur-md`}
+      aria-expanded={sideBarOpen}
     >
       {/* Header */}
-      <div className="p-6 flex items-center justify-between border-b border-gray-800 bg-gray-950">
+      <div className="p-6 flex items-center justify-between">
         <span
           className={`text-xl font-semibold tracking-wide transition-opacity duration-200 ${
             sideBarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -148,45 +142,73 @@ const Sidebar: React.FC<HeaderProps> = (props) => {
       {/* Navigation */}
       <nav className="flex-1 flex flex-col justify-between">
         <ul className="space-y-1 px-2 py-6">
-          <li>
-            <TimerButton sideBarOpen={sideBarOpen} />
+          <li className="h-10">
+            <Tooltip text="Timer">
+              <TimerButton sideBarOpen={sideBarOpen} />
+            </Tooltip>
           </li>
 
-          <li>
-            <SidebarButton
-              icon={<Activity className="w-5 h-5 mr-0" />}
-              label="Brainstorm"
-              sideBarOpen={sideBarOpen}
-            />
+          <li className="h-10">
+            <Tooltip text="Brainstorm">
+              <BrainstormButton sideBarOpen={sideBarOpen} />
+            </Tooltip>
           </li>
 
-          <ExportDropdown sideBarOpen={sideBarOpen} />
-          <ImportDropdown sideBarOpen={sideBarOpen} />
-
-          <li>
-            <SidebarButton
-              icon={<EyeOff className="w-5 h-5 mr-0" />}
-              label="Focus Mode"
-              sideBarOpen={sideBarOpen}
-            />
+          <li className="h-10">
+            <Suspense fallback={<div className="h-10 bg-zinc-700/40 rounded animate-pulse" />}>
+              <ExportDropdown
+                sideBarOpen={sideBarOpen}
+                isOpen={hoveredDropdown === "export"}
+                setHovered={() => setDropdownHovered("export")}
+                clearHovered={clearDropdownHovered}
+              />
+            </Suspense>
           </li>
 
-          <li>
-            <SidebarButton
-              icon={<Globe className="w-5 h-5 mr-0" />}
-              label={languageLabel}
-              sideBarOpen={sideBarOpen}
-              onClick={handleLanguageChange}
-            />
+          <li className="h-10">
+            <Suspense fallback={<div className="h-10 bg-zinc-700/40 rounded animate-pulse" />}>
+              <ImportDropdown
+                sideBarOpen={sideBarOpen}
+                isOpen={hoveredDropdown === "import"}
+                setHovered={() => setDropdownHovered("import")}
+                clearHovered={clearDropdownHovered}
+              />
+            </Suspense>
           </li>
 
-          <li>
-            <SidebarButton
-              icon={<HelpCircle className="w-5 h-5 mr-0" />}
-              label={props.helpText}
-              sideBarOpen={sideBarOpen}
-              ariaLabel="Help"
-            />
+          {/* Focus Mode Button */}
+          <li className="h-10">
+            <Tooltip text={managedUI?.focusedSegment ? "Exit Focus Mode" : "Enter Focus Mode"}>
+              <SidebarButton
+                icon={getFocusButtonIcon()}
+                label={getFocusButtonLabel()}
+                sideBarOpen={sideBarOpen}
+                onClick={handleFocusModeToggle}
+                className={managedUI?.focusedSegment ? "bg-blue-600 hover:bg-blue-700" : ""}
+              />
+            </Tooltip>
+          </li>
+
+          <li className="h-10">
+            <Tooltip text={getLanguageLabel()}>
+              <SidebarButton
+                icon={<Globe className="w-5 h-5" />}
+                label={getLanguageLabel()}
+                sideBarOpen={sideBarOpen}
+                onClick={handleLanguageChange}
+              />
+            </Tooltip>
+          </li>
+
+          <li className="h-10">
+            <Tooltip text={helpText}>
+              <SidebarButton
+                icon={<HelpCircle className="w-5 h-5" />}
+                label={helpText}
+                sideBarOpen={sideBarOpen}
+                ariaLabel="Help"
+              />
+            </Tooltip>
           </li>
 
           <li className="px-3 py-2">
@@ -195,41 +217,13 @@ const Sidebar: React.FC<HeaderProps> = (props) => {
         </ul>
       </nav>
 
-      {/* Toggle Button */}
-      <button
+      {sideBarOpen && <SidebarFooter />}
+
+      <SidebarToggleButton
+        sideBarOpen={sideBarOpen}
         onClick={() => setSideBarOpen((prev) => !prev)}
-        className="absolute right-[-24px] top-1/2 -translate-y-1/2 bg-gray-900 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-gray-800 transition z-50 border-2 border-gray-800"
-        aria-label={sideBarOpen ? "Close sidebar" : "Open sidebar"}
-        type="button"
-      >
-        {sideBarOpen ? (
-          <svg
-            width="24"
-            height="24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        ) : (
-          <svg
-            width="24"
-            height="24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
-        )}
-      </button>
+        aria-controls="sidebar"
+      />
     </aside>
   );
 };

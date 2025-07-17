@@ -37,18 +37,25 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 
 TODO
-- exporten naar? 
-- drag en drop enkel als volledig uitgezoomed is
-- clock is goed
-- brainstorm is goed, met overzicht van wat je hebt toegevoegd
-- CSV voor excel in te vullen> mag kolomformaat
-- import voor csv
-- json voor intern
+
 - sharebutton 
 - focusmode is gewoon 1 van de segment groter maken en dan links en rechts 
 - titels ook vernederandsen
 - driverjs met tutorial . hulp > tutorial
 - videointegratie van http://localhost:3000/en/?sessionId=3641e3b6-866c-43f2-bf88-f5efce8cce56
-- lettertype gradient en logo
-- logo voor subsidies 
+- GRAPHICS
+  - lettertype gradient en logo
+  - logo voor subsidies 
+
+
+DONE
+- clock is goed
+- drag en drop enkel als volledig uitgezoomed is
+- import voor csv
+- json voor intern
 - footer
+  
+- 
+TO CHECK
+- brainstorm is goed, met overzicht van wat je hebt toegevoegd
+

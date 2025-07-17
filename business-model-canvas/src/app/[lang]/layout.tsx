@@ -1,6 +1,5 @@
 
 import "../globals.css";
-import { DndContext } from "@dnd-kit/core";
 export async function generateStaticParams() {
   return [{ lang: "en-US" }, { lang: "de" }];
 }
@@ -24,7 +23,7 @@ export default async function RootLayout({
   params,
 }: {
   children: ReactNode;
-  params: Promise<{ lang: "en-US" | "de" }>;
+  params: Promise<{ lang: "en-US" | "nl" }>;
 }) {
   const { lang } = await params;
 

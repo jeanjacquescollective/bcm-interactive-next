@@ -22,16 +22,15 @@ export default async function Page({
   }
   const dictionary = await getDictionary(lang as "en" | "nl");
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] grid-cols-5 min-h-screen max-h-screen overflow-y-auto">
-      <Header />
-      <main className="col-span-5 container mx-auto px-4">
+    <div className="relative min-h-screen max-h-screen overflow-y-auto">
+      {/* <Header /> */}
+      <main className="w-full h-screen pl-20">
         <MainContent />
       </main>
       <Sidebar
-        manageCanvasesText={dictionary.header.manageCanvasesText}
-        helpText={dictionary.header.helpText}
+      manageCanvasesText={dictionary.header.manageCanvasesText}
+      helpText={dictionary.header.helpText}
       />
-      
     </div>
   );
 }

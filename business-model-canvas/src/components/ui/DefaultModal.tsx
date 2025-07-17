@@ -1,5 +1,5 @@
 import React from "react";
-import CloseButton from "../ui/CloseButton";
+import CloseButton from "./CloseButton";
 
 interface ModalProps {
   onClose: () => void;

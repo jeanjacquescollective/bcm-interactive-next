@@ -10,6 +10,8 @@ function getLocalStorage(): Storage | null {
 
 export const localStorageProvider: SessionStorageProvider = {
   async loadSessions(): Promise<CanvasSession[]> {
+    console.log("Loading sessions from localStorage");
+    // Check if localStorage is available
     const localStorage = getLocalStorage();
     if (!localStorage) return [];
     const saved = localStorage.getItem(STORAGE_KEY);
