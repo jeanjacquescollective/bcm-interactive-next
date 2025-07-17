@@ -112,11 +112,19 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({ onClose }) => {
 
     const getColorHex = (colorObj: typeof colors[0] | { light: string; dark: string }) => {
         // Accepts either a full color object or just a hex object
-        const hex = (colorObj as any).hex ? (colorObj as any).hex : colorObj;
-        if (typeof window !== "undefined" && document.documentElement.classList.contains("dark")) {
-            return hex.dark;
+        let hexObj: { light: string; dark: string };
+        if ("hex" in colorObj && typeof colorObj.hex === "object") {
+            hexObj = colorObj.hex;
+        } else if ("light" in colorObj && "dark" in colorObj) {
+            hexObj = colorObj as { light: string; dark: string };
+        } else {
+            // fallback to default color
+            hexObj = { light: "#fff", dark: "#27272a" };
         }
-        return hex.light;
+        if (typeof window !== "undefined" && document.documentElement.classList.contains("dark")) {
+            return hexObj.dark;
+        }
+        return hexObj.light;
     };
 
     if (loading) return <div className="text-center py-10">Loading...</div>;

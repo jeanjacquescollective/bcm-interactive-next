@@ -2,14 +2,12 @@ import React from "react";
 import Modal from "../ui/DefaultModal";
 
 interface QuestionsModalProps {
-  isOpen: boolean;
   onClose: () => void;
   questions: string[];
   title?: string;
 }
 
 const QuestionsModal: React.FC<QuestionsModalProps> = ({
-  isOpen,
   onClose,
   questions,
   title = "Guiding Questions",

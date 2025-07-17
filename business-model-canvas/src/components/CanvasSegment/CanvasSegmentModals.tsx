@@ -23,7 +23,6 @@ const CanvasSegmentModals: React.FC<CanvasSegmentModalsProps> = ({
     <>
       {showQuestions && (
         <QuestionsModal
-          isOpen={showQuestions}
           onClose={onCloseQuestions}
           questions={segmentQuestions}
         />
@@ -31,7 +30,7 @@ const CanvasSegmentModals: React.FC<CanvasSegmentModalsProps> = ({
 
       {confirmDeleteId && (
         <ConfirmModal
-          open={!!confirmDeleteId}
+          
           onConfirm={() => onConfirmDelete(confirmDeleteId)}
           onCancel={onCancelDelete}
           message="Are you sure you want to delete this note?"

@@ -19,8 +19,8 @@ const parseCSV = (csv: string): CanvasSession | undefined => {
     const lines = csv.split(/\r?\n/).filter(Boolean);
 
     // Parse session metadata
-    let session: Partial<CanvasSession> = {};
-    let data: CanvasSession["data"] = {
+    const session: Partial<CanvasSession> = {};
+    const data: CanvasSession["data"] = {
         keyPartners: { items: [], questions: [], key: "keyPartners" },
         keyActivities: { items: [], questions: [], key: "keyActivities" },
         keyResources: { items: [], questions: [], key: "keyResources" },
@@ -150,6 +150,7 @@ const ImportModal: React.FC<Props> = ({ onClose, onImport }) => {
                 }
             } catch (err) {
                 toast.error("Failed to import file.");
+                console.error("Import error:", err);
             }
         };
 

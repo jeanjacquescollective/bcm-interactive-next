@@ -2,14 +2,14 @@
 import React, { useEffect, useRef } from "react";
 import DeleteSessionButton from "./DeleteSessionButton";
 import CreateSessionButton from "./CreateSessionButton";
-import { CanvasSession } from "@/types/CanvasSession";
+import { CanvasData, CanvasSession } from "@/types/CanvasSession";
 
 interface SessionToolbarProps {
     sessions: CanvasSession[];
     selectedSessionId: string | null;
     setSelectedSessionId: (id: string | null) => void;
     setSessions: (updater: (prev: CanvasSession[]) => CanvasSession[]) => void;
-    setCanvasData: (data: any) => void;
+    setCanvasData: (data: CanvasData) => void;
     handleSessionNameChange: (newName: string) => void;
     handleSessionCreate: (name: string) => void;
     handleSessionDelete: (id: string) => void;

@@ -1,5 +1,3 @@
-import BusinessModelCanvas from "@/components/CanvasBoard";
-import Header from "@/containers/Header";
 import Sidebar from "@/containers/Sidebar";
 import { getDictionary } from "./dictionaries";
 import MainContent from "@/containers/MainContent";
@@ -28,8 +26,8 @@ export default async function Page({
         <MainContent />
       </main>
       <Sidebar
-      manageCanvasesText={dictionary.header.manageCanvasesText}
-      helpText={dictionary.header.helpText}
+        manageCanvasesText={dictionary.header.manageCanvasesText}
+        helpText={dictionary.header.helpText}
       />
     </div>
   );

@@ -14,7 +14,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   onDelete,
 }) => {
   const { theme } = useTheme();
-  const isExpanded = expandedNoteIds.includes(note.id);
+  const isExpanded = typeof note.id === "string" && expandedNoteIds.includes(note.id);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: note.id });
 

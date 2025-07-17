@@ -1,16 +1,12 @@
 "use client";
 import React, { useState } from 'react';
-import HelpModal from './Help';
 
 // Example modal components
 import { ManagedUI } from "@/contexts/ManagedUI";
 import TimerModal from './TimerModal';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
-import NoteModal from './canvasboard/NoteModal';
-import { Note } from '@/types/NoteList';
 import BrainstormModal from './BrainstormModal';
 import ImportModal from './ImportModal';
-import { CanvasUI } from '@/contexts/CanvasUI';
 
 
 const Modals: React.FC = () => {
@@ -18,9 +14,7 @@ const Modals: React.FC = () => {
     const { openTimerModal, setOpenTimerModal } = managedUI || {};
     const { openBrainstormModal, setOpenBrainstormModal } = managedUI || {};
     const { openImportModal, setOpenImportModal } = managedUI || {};
-    const { openNoteModal, setOpenNoteModal } = managedUI || {};
     const [position, setPosition] = useState({ x: 100, y: 100 });
-    const currentNote = managedUI?.currentNote || null;
 
     const handleDragEnd = (event: DragEndEvent) => {
         if (event.active.id === "timer-modal" && event.delta) {
@@ -31,13 +25,13 @@ const Modals: React.FC = () => {
         }
     };
 
-    const closeModal = () => {
-        if (managedUI) {
-            managedUI.setOpenTimerModal(false);
-            managedUI.setOpenBrainstormModal(false);
-            managedUI.setOpenNoteModal(false);
-        }
-    };
+    // const closeModal = () => {
+    //     if (managedUI) {
+    //         managedUI.setOpenTimerModal(false);
+    //         managedUI.setOpenBrainstormModal(false);
+    //         managedUI.setOpenNoteModal(false);
+    //     }
+    // };
 
 
 

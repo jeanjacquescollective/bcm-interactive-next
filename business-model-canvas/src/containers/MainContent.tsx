@@ -1,7 +1,8 @@
 "use client";
+import type { DragEndEvent } from "@dnd-kit/core";
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { CanvasData, CanvasSession } from "@/types/CanvasSession";
+import { CanvasData, CanvasSession, SegmentItem } from "@/types/CanvasSession";
 import SessionToolbar from "@components/SessionManagement/SessionToolbar";
 import CanvasBoard from "@/components/CanvasBoard";
 
@@ -118,7 +119,7 @@ const MainContent: React.FC = () => {
 
   const handleSegmentChange = (
     segmentKey: keyof CanvasData,
-    items: any[],
+    items: SegmentItem[],
     questions: string[]
   ) => {
     const newCanvasData: CanvasData = {
@@ -131,14 +132,17 @@ const MainContent: React.FC = () => {
     };
     handleSessionUpdate({ data: newCanvasData });
   };
-const handleDragEnd = (event: { active: any; over: any }) => {
+
+const handleDragEnd = (event: DragEndEvent) => {
   const { active, over } = event;
   if (!over) return;
 
   const noteId = active.id;
   const sourceKey = noteIdToSegmentKey[noteId];
   const isOverNote = noteIdToSegmentKey.hasOwnProperty(over.id);
-  const destKey: keyof CanvasData = isOverNote ? noteIdToSegmentKey[over.id] : over.id;
+  const destKey: keyof CanvasData = isOverNote
+    ? noteIdToSegmentKey[over.id]
+    : (String(over.id) as keyof CanvasData);
 
   if (!sourceKey || !destKey || !canvasData[sourceKey]) return;
 

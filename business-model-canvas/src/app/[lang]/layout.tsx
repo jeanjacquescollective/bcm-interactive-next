@@ -20,12 +20,11 @@ import { ManagedUIProvider } from "@/contexts/ManagedUI";
 
 export default async function RootLayout({
   children,
-  params,
 }: {
   children: ReactNode;
   params: Promise<{ lang: "en-US" | "nl" }>;
 }) {
-  const { lang } = await params;
+  // const { lang } = await params;
 
   return (
 

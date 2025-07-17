@@ -16,7 +16,7 @@ const HelpModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen,
                     <p className="mb-2">
                         The Business Model Canvas is a strategic management template for
                         developing new or documenting existing business models. It is a
-                        visual chart with elements describing a firm's value proposition,
+                        visual chart with elements describing a firm&apos;s value proposition,
                         infrastructure, customers, and finances.
                     </p>
                 </div>
@@ -24,7 +24,7 @@ const HelpModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen,
                 <div className="mb-4">
                     <h3 className="font-bold mb-2">How to use this tool:</h3>
                     <ul className="list-disc pl-5 space-y-2">
-                        <li>Add notes to each section by clicking the "Add note" button.</li>
+                        <li>Add notes to each section by clicking the &quot;Add note&quot; button.</li>
                         <li>Drag and drop notes between sections to reorganize your ideas.</li>
                         <li>Click the help icon in each section for guiding questions.</li>
                         <li>Your work is automatically saved in your browser.</li>

@@ -9,37 +9,40 @@ import { ManagedUI } from "@/contexts/ManagedUI";
 const FocusNavigationArrows: React.FC = () => {
   const managedUI = useContext(ManagedUI);
 
-  const segmentOptions: Array<{ key: keyof CanvasData; label: string }> = [
-    { key: "keyPartners", label: "Key Partners" },
-    { key: "keyActivities", label: "Key Activities" },
-    { key: "keyResources", label: "Key Resources" },
-    { key: "valuePropositions", label: "Value Propositions" },
-    { key: "customerRelationships", label: "Customer Relationships" },
-    { key: "channels", label: "Channels" },
-    { key: "customerSegments", label: "Customer Segments" },
-    { key: "costStructure", label: "Cost Structure" },
-    { key: "revenueStreams", label: "Revenue Streams" },
-    { key: "brainStormArea", label: "Brainstorm Area" },
-  ];
+  const segmentOptions = React.useMemo<Array<{ key: keyof CanvasData; label: string }>>(
+    () => [
+      { key: "keyPartners", label: "Key Partners" },
+      { key: "keyActivities", label: "Key Activities" },
+      { key: "keyResources", label: "Key Resources" },
+      { key: "valuePropositions", label: "Value Propositions" },
+      { key: "customerRelationships", label: "Customer Relationships" },
+      { key: "channels", label: "Channels" },
+      { key: "customerSegments", label: "Customer Segments" },
+      { key: "costStructure", label: "Cost Structure" },
+      { key: "revenueStreams", label: "Revenue Streams" },
+      { key: "brainStormArea", label: "Brainstorm Area" },
+    ],
+    []
+  );
 
   const getCurrentSegmentIndex = useCallback(() => {
     if (!managedUI?.focusedSegment) return -1;
     return segmentOptions.findIndex(segment => segment.key === managedUI.focusedSegment);
-  }, [managedUI?.focusedSegment]);
+  }, [managedUI?.focusedSegment, segmentOptions]);
 
   const goToNextSegment = useCallback(() => {
     const currentIndex = getCurrentSegmentIndex();
     if (currentIndex >= 0 && currentIndex < segmentOptions.length - 1) {
       managedUI?.setFocusedSegment(segmentOptions[currentIndex + 1].key);
     }
-  }, [getCurrentSegmentIndex, managedUI]);
+  }, [getCurrentSegmentIndex, managedUI, segmentOptions]);
 
   const goToPreviousSegment = useCallback(() => {
     const currentIndex = getCurrentSegmentIndex();
     if (currentIndex > 0) {
       managedUI?.setFocusedSegment(segmentOptions[currentIndex - 1].key);
     }
-  }, [getCurrentSegmentIndex, managedUI]);
+  }, [getCurrentSegmentIndex, managedUI, segmentOptions]);
 
   const exitFocusMode = useCallback(() => {
     managedUI?.setFocusedSegment(null);

@@ -9,7 +9,7 @@ interface ColorSchemeToggleProps {
 
 const ColorSchemeToggle: React.FC<ColorSchemeToggleProps> = ({sideBarOpen}) => {
     const [darkMode, setDarkMode] = useState<boolean | null>(null);
-    const { theme, setTheme } = useTheme();
+    const { setTheme } = useTheme();
 
     
     useEffect(() => {
@@ -25,7 +25,7 @@ const ColorSchemeToggle: React.FC<ColorSchemeToggleProps> = ({sideBarOpen}) => {
             }
         
     }
-    }, []);
+    }, [setTheme]);
 
 const toggleDarkMode = (newState: boolean) => {
     setDarkMode(newState);

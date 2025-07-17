@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-import { Download, Upload } from "react-feather";
+import { Download } from "react-feather";
 import SidebarButton from "./SidebarButton";
 import { useSelectedSession } from "@/hooks/useSelectedSession";
 import { exportSessionToFormat } from "@/utils/exportSession";
@@ -31,6 +31,7 @@ const ExportDropdown: React.FC<Props> = ({ sideBarOpen, isOpen, setHovered, clea
       await exportSessionToFormat(format, session);
     } catch (err) {
       toast.error("Export failed. Please try again.");
+      console.error("Export error:", err);
     } finally {
       setLoading(false);
     }

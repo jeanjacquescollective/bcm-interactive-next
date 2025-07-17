@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Download, Upload } from "react-feather";
+import { Upload } from "react-feather";
 import SidebarButton from "./SidebarButton";
 import { ManagedUI } from "@/contexts/ManagedUI";
 

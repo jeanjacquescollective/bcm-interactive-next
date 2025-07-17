@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import Footer from "@/containers/Footer";
 export default function HomePage() {

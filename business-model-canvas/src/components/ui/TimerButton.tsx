@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useContext } from "react";
 import { Clock } from "react-feather";
 
 import { ManagedUI } from "@/contexts/ManagedUI";

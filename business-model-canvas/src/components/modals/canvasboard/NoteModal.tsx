@@ -7,7 +7,7 @@ interface NoteModalProps {
   onClose: () => void;
   onSave: (data: Note) => void;
   title: string;
-  note?: Note;
+  note?: Omit<Note, "id"> & { id?: string };
   disabled?: boolean;
 }
 
@@ -36,9 +36,6 @@ const NoteModal: React.FC<NoteModalProps> = ({
   const [currentNoteColor, setCurrentNoteColor] = useState<{ light: string; dark: string }>(
     () => note?.color || defaultColor
   );
-  useEffect(() => {
-    console.log("Initial currentNoteColor:", currentNoteColor);
-  }, []);
 
   // Update local state if props change
   useEffect(() => {
@@ -51,7 +48,7 @@ const NoteModal: React.FC<NoteModalProps> = ({
 
   useEffect(() => {
     setCurrentNoteColor(note?.color || defaultColor);
-  }, [note?.color]);
+  }, [note?.color, defaultColor]);
 
   // Handle color select button click
   const handleColorSelect = (color: { light: string; dark: string }) => {
@@ -66,7 +63,7 @@ const NoteModal: React.FC<NoteModalProps> = ({
     ) return; // safeguard
 
     onSave({
-      id: note?.id || undefined, // Use existing ID or generate a new one
+      id: note?.id || "", // Use existing ID or default to empty string
       title: currentNoteTitle.trim(),
       description: currentNoteDescription.trim(),
       color: currentNoteColor,

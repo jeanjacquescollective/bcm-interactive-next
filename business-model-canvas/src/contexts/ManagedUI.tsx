@@ -30,7 +30,6 @@ export function ManagedUIProvider({ children }: { children: ReactNode }) {
     const [openNoteModal, setOpenNoteModal] = useState(false);
     const [openBrainstormModal, setOpenBrainstormModal] = useState(false);
     const [openImportModal, setOpenImportModal] = useState(false);
-    const [openFocusModal, setOpenFocusModal] = useState(false);
     const [currentNote, setCurrentNote] = useState<Note | null>(null);
     const [segmentKey, setSegmentKey] = useState<keyof CanvasData | null>(null);
     const [focusedSegment, setFocusedSegment] = useState<keyof CanvasData | null>(null);

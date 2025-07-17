@@ -5,6 +5,7 @@ import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 import { CanvasSession } from "@/types/CanvasSession";
 import { toast } from "sonner";
+import { Note } from "@/types/NoteList";
 
 const downloadFile = (data: BlobPart, type: string, filename: string) => {
   const blob = new Blob([data], { type });
@@ -35,9 +36,9 @@ export async function exportSessionToFormat(format: string, session: CanvasSessi
     ];
 
     const areas = Object.entries(session.data)
-      .filter(([_, value]) => value?.items?.length)
+      .filter(([area, value]) => { console.log(area); return value?.items?.length; })
       .flatMap(([area, value]) =>
-      value.items.map((item: any) => [
+      value.items.map((item: Note) => [
         `"${area}"`,
         `"${item.id}"`,
         `"${(item.title ?? "").replace(/"/g, '""')}"`,

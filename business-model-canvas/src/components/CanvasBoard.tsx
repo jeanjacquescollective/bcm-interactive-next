@@ -22,10 +22,10 @@ interface CanvasBoardProps {
   COLORS: string[];
   handleSegmentChange: (
     segmentKey: keyof CanvasData,
-    items: any[],
+    items: Note[],
     questions: string[]
   ) => void;
-  handleDragEnd: (event: { active: any; over: any }) => void;
+  handleDragEnd: (event: import("@dnd-kit/core").DragEndEvent) => void;
 }
 
 const CanvasBoard: React.FC<CanvasBoardProps> = ({

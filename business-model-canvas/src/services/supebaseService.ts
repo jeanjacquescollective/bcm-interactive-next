@@ -52,6 +52,7 @@ export async function fetchSegmentQuestions(segment: string | number, userId = n
           return JSON.parse(questions);
         } catch (e) {
           // If not valid JSON, split by newlines as fallback
+          console.warn('Failed to parse questions JSON, falling back to newline split:', e);
           return questions.split('\n').filter(q => q.trim().length > 0);
         }
       }

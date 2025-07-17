@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { Clock, MoreVertical } from "react-feather";
+import { Clock } from "react-feather";
 import { useDraggable } from "@dnd-kit/core";
 import CloseButton from "@/components/ui/CloseButton";
 import DragHandle from "../ui/DragHandle";

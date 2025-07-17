@@ -1,5 +1,4 @@
-import Footer from "@/containers/Footer";
-import { ManagedUIProvider } from "@/contexts/ManagedUI";
+
 import { ThemeProvider } from "next-themes";
 import React from "react";
 import { Toaster } from "sonner";

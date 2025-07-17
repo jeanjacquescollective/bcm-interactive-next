@@ -83,7 +83,7 @@ const Sidebar: React.FC<HeaderProps> = ({ helpText }) => {
     }
   }, []);
 
-  const segmentOptions: Array<{ key: keyof CanvasData; label: string }> = [
+  const segmentOptions = React.useMemo<Array<{ key: keyof CanvasData; label: string }>>(() => [
     { key: "keyPartners", label: "Key Partners" },
     { key: "keyActivities", label: "Key Activities" },
     { key: "keyResources", label: "Key Resources" },
@@ -94,7 +94,7 @@ const Sidebar: React.FC<HeaderProps> = ({ helpText }) => {
     { key: "costStructure", label: "Cost Structure" },
     { key: "revenueStreams", label: "Revenue Streams" },
     { key: "brainStormArea", label: "Brainstorm Area" },
-  ];
+  ], []);
 
   const handleFocusModeToggle = useCallback(() => {
     console.log("Toggling focus mode");
@@ -106,7 +106,7 @@ const Sidebar: React.FC<HeaderProps> = ({ helpText }) => {
       managedUI?.setFocusedSegment(segmentOptions[0].key);
     }
     console.log("Focus mode toggled:", managedUI?.focusedSegment);
-  }, [managedUI]);
+  }, [managedUI, segmentOptions]);
 
   const getFocusButtonLabel = () => {
     if (managedUI?.focusedSegment) {
@@ -126,7 +126,6 @@ const Sidebar: React.FC<HeaderProps> = ({ helpText }) => {
       className={`fixed top-0 left-0 h-screen text-white shadow-2xl z-40 flex flex-col transition-all duration-300 box-border ${
         sideBarOpen ? "w-72" : "w-20"
       } bg-[rgba(30,30,40,0.7)] backdrop-blur-md`}
-      aria-expanded={sideBarOpen}
     >
       {/* Header */}
       <div className="p-6 flex items-center justify-between">

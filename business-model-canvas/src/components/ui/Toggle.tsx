@@ -9,7 +9,6 @@ type ToggleProps = {
 export default function Toggle({
     initialState,
     onToggle,
-    label,
     colorOn = 'bg-green-400',
     colorOff = 'bg-gray-300',
 }: ToggleProps & { colorOn?: string; colorOff?: string }) {

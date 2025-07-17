@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
             sessions = JSON.parse(stored);
         } catch {
             sessions = [{
-                id: Date.now(),
+                id: Date.now().toString(),
                 name: "Untitled Canvas",
                 created: new Date().toISOString(),
                 lastModified: new Date().toISOString(),
@@ -37,7 +37,7 @@ if (typeof window !== "undefined") {
 }
 
 // Helper to find session index
-function findSessionIndex(sessionId: number) {
+function findSessionIndex(sessionId: string) {
     return sessions.findIndex((s) => s.id === sessionId);
 }
 
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     const { name = "Untitled Canvas", data = {} } = await req.json();
     const now = new Date().toISOString();
     const newSession: CanvasSession = {
-        id: Date.now(),
+        id: Date.now().toString(),
         name,
         created: now,
         lastModified: now,

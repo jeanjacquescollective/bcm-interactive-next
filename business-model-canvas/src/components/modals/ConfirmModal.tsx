@@ -2,7 +2,6 @@ import React from "react";
 import Modal from "@/components/ui/DefaultModal";
 
 interface ConfirmModalProps {
-  open: boolean;
   onCancel: () => void;
   onConfirm: () => void;
   title?: string;
@@ -10,7 +9,6 @@ interface ConfirmModalProps {
 }
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({
-  open,
   onCancel,
   onConfirm,
   title = "Are you sure?",
