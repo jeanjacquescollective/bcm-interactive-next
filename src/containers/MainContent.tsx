@@ -2,7 +2,8 @@
 import type { DragEndEvent } from "@dnd-kit/core";
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { CanvasData, CanvasSession, SegmentItem } from "@/types/CanvasSession";
+import { CanvasData, CanvasSession } from "@/types/CanvasSession";
+
 import SessionToolbar from "@components/SessionManagement/SessionToolbar";
 import CanvasBoard from "@/components/CanvasBoard";
 
@@ -10,6 +11,7 @@ import { EMPTY_SESSION } from "@/lib/actions/sessionActions";
 import { SessionService } from "@/lib/services/sessionService";
 import { localStorageProvider } from "@/lib/storage/client/localStorage";
 import { CanvasUIProvider } from "@/contexts/CanvasUI";
+import { Note } from "@/types/NoteList";
 
 const sessionService = new SessionService(localStorageProvider);
 
@@ -119,7 +121,7 @@ const MainContent: React.FC = () => {
 
   const handleSegmentChange = (
     segmentKey: keyof CanvasData,
-    items: SegmentItem[],
+    items: Note[],
     questions: string[]
   ) => {
     const newCanvasData: CanvasData = {

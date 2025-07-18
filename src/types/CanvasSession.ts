@@ -1,13 +1,8 @@
 // Types
-export interface SegmentItem {
-    id: string;
-    title: string;
-    description: string;
-    color: { light: string; dark: string } ; 
-}
+import { Note } from "./NoteList";
 
 export interface CanvasSegmentData {
-    items: SegmentItem[];
+    items: Note[];
     questions: string[];
     key: string;
 }

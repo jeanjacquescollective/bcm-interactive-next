@@ -63,7 +63,7 @@ const NoteModal: React.FC<NoteModalProps> = ({
     ) return; // safeguard
 
     onSave({
-      id: note?.id || "", // Use existing ID or default to empty string
+      id: note?.id || undefined, // Use existing ID or default to undefined
       title: currentNoteTitle.trim(),
       description: currentNoteDescription.trim(),
       color: currentNoteColor,

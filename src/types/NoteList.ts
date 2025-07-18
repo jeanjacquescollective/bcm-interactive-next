@@ -1,5 +1,5 @@
 export type Note = {
-  id: string ;
+  id?: string;
   title: string;
   description: string;
   color: { light: string; dark: string }; // Color can be an object or a string
