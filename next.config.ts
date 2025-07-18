@@ -3,9 +3,9 @@
 
 const nextConfig = {
   // For GitHub Pages deployment
-  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
-  basePath: process.env.NODE_ENV === 'production' ? '/business-model-canvas' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/business-model-canvas/' : '',
+  output: process.env.NODE_ENV === 'production' ? undefined : undefined,
+  basePath: process.env.NODE_ENV === 'production' ? '' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
 
   trailingSlash: true,
   // For static exports
