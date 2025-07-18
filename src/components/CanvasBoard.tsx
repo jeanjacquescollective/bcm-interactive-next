@@ -59,7 +59,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({
       const segmentKey = canvasUI?.segmentKey ?? "brainStormArea";
       const segment = canvasData[segmentKey];
 
-      if ("id" in note && note.id !== undefined) {
+      if ("id" in note && note.id !== '') {
         const updatedItems = (segment?.items ?? []).map((item: Note) =>
           item.id === note.id ? { ...item, ...note } : item
         );
