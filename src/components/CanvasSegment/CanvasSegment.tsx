@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import NoteList from "./NoteList";
 import { Note } from "@/types/NoteList";
-import { CanvasData, CanvasSegmentData, SegmentItem } from "@/types/CanvasSession";
+import { CanvasData, CanvasSegmentData } from "@/types/CanvasSession";
 import { useDroppable } from "@dnd-kit/core";
 import { CanvasUI } from "@/contexts/CanvasUI";
 import CanvasSegmentModals from "./CanvasSegmentModals";
@@ -10,7 +10,7 @@ import { useCanvasSegmentModals } from "@/hooks/useCanvasSegmentModals";
 interface CanvasSegmentProps {
   segmentTitle: string;
   segmentData: CanvasSegmentData;
-  handleSegmentChange: (segmentKey: keyof CanvasData, items: SegmentItem[], questions: string[]) => void;
+  handleSegmentChange: (segmentKey: keyof CanvasData, items: Note[], questions: string[]) => void;
     className?: string;
 }
 
@@ -32,7 +32,7 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
     questions: [],
   };
 
-  const [notes, setNotes] = useState<SegmentItem[]>(segmentItems || []);
+  const [notes, setNotes] = useState<Note[]>(segmentItems || []);
   const [expandedNoteIds, setExpandedNoteIds] = useState<string[]>([]);
 
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({ id: segmentData.key });
@@ -60,7 +60,7 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
     setConfirmDeleteId(null);
   };
 
-  const handleSortEnd = (newNotes: SegmentItem[]) => {
+  const handleSortEnd = (newNotes: Note[]) => {
     setNotes(newNotes);
     handleSegmentChange(segmentData.key as keyof CanvasData, newNotes, segmentQuestions);
   };

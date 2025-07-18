@@ -16,7 +16,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const { theme } = useTheme();
   const isExpanded = typeof note.id === "string" && expandedNoteIds.includes(note.id);
 
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: note.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: note.id ?? `-1` });
 
 
 
@@ -55,7 +55,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
 
       {note.description && (
         <button
-          onClick={() => onExpand(note.id)}
+          onClick={() => typeof note.id === "string" && onExpand(note.id)}
           aria-label={isExpanded ? "Collapse note" : "Expand note"}
           type="button"
           className="mr-2 mt-0.5 bg-transparent border-0 text-base"
@@ -80,7 +80,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
       </button>
 
       <button
-        onClick={() => onDelete(note.id)}
+        onClick={() => typeof note.id === "string" && onDelete(note.id)}
         title="Delete"
         type="button"
         aria-label="Delete note"

@@ -27,9 +27,17 @@ const NoteList: React.FC<NoteListProps> = ({
             <div className="text-gray-500 italic py-4 text-center">No notes</div>
         );
     }
+    if (notes.some((note) => typeof(note.id) !== "string")) {
+      return (
+        <div className="text-red-500 italic py-4 text-center">
+          Error: One or more notes have an invalid id.
+        </div>
+      );
+    }
+
     return (
     <SortableContext
-      items={notes.map((note) => note.id)}
+      items={notes.filter((note) => note.id !== undefined).map((note) => note.id as string)}
       strategy={verticalListSortingStrategy}
     >
       {notes.map((note) => (

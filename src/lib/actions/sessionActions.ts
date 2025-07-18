@@ -1,4 +1,5 @@
-import { CanvasData, CanvasSession, SegmentItem } from "@/types/CanvasSession";
+import { CanvasData, CanvasSession } from "@/types/CanvasSession";
+import { Note } from "@/types/NoteList";
 import { v4 as uuidv4 } from "uuid";
 
 
@@ -47,7 +48,7 @@ export const updateSession = (
 export const updateSegment = (
   canvasData: CanvasData,
   segmentKey: keyof CanvasData,
-  items: SegmentItem[],
+  items: Note[],
   questions: string[]
 ): CanvasData => ({
   ...canvasData,
@@ -57,7 +58,7 @@ export const updateSegment = (
 export const addNote = (
   canvasData: CanvasData,
   segmentKey: keyof CanvasData,
-  note: Omit<SegmentItem, "id">
+  note: Omit<Note, "id">
 ): CanvasData => ({
   ...canvasData,
   [segmentKey]: {
@@ -70,7 +71,7 @@ export const editNote = (
   canvasData: CanvasData,
   segmentKey: keyof CanvasData,
   noteId: number,
-  updated: Partial<Omit<SegmentItem, "id">>
+  updated: Partial<Omit<Note, "id">>
 ): CanvasData => ({
   ...canvasData,
   [segmentKey]: {

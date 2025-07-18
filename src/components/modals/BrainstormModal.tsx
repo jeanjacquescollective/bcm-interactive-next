@@ -7,7 +7,7 @@ import { EMPTY_SESSION } from "@/lib/actions/sessionActions";
 import { Note } from "@/types/NoteList";
 import CloseButton from "../ui/CloseButton";
 import colors from "@/data/colors.json";
-import { CanvasSession, SegmentItem } from "@/types/CanvasSession";
+import { CanvasSession } from "@/types/CanvasSession";
 type BrainstormModalProps = {
     onClose: () => void;
 };
@@ -17,7 +17,7 @@ const sessionService = new SessionService(localStorageProvider);
 const BrainstormModal: React.FC<BrainstormModalProps> = ({ onClose }) => {
     const [sessions, setSessions] = useState<CanvasSession[]>([]);
     const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
-    const [brainstormData, setBrainstormData] = useState<SegmentItem[]>([]);
+    const [brainstormData, setBrainstormData] = useState<Note[]>([]);
     const [inputTitle, setInputTitle] = useState("");
     const [inputDescription, setInputDescription] = useState("");
     const [selectedColor, setSelectedColor] = useState(colors[0]);
