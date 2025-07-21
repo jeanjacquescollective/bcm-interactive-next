@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @variant dark (&:where([data-theme="dark"] *));
+
 /* Light mode variables */
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -17,8 +18,10 @@
 /* Dark mode overrides */
 .dark {
   --foreground-rgb: 255, 255, 255;
-  --background-rgb: 17, 24, 39; /* Tailwind's gray-900 */
-  --color-white: #1f2937; /* optional darker white substitute */
+  --background-rgb: 17, 24, 39;
+  /* Tailwind's gray-900 */
+  --color-white: #1f2937;
+  /* optional darker white substitute */
   --color-purple: #A78BFA;
   --color-cyan: #22D3EE;
   --color-peach: #FBCFE8;
@@ -34,9 +37,11 @@ html {
 }
 
 .gradient-haven {
-  background: 
+  background:
     radial-gradient(circle at 75% 35%, #00a3bd 0%, #00a3bd 40%, transparent 70%),
-    radial-gradient(circle at 15% 55%, #b39cc5 0%, #b39cc5 40%, transparent 70%),
-    radial-gradient(circle at 85% 85%, #efc2b3 0%, #efc2b3 40%, transparent 70%);
+    radial-gradient(circle at 25% 35%, #00a3bd 0%, #00a3bd 15%, transparent 70%),
+
+    radial-gradient(circle at 15% 85%, #b39cc5 0%, #b39cc5 30%, transparent 70%),
+    radial-gradient(circle at 90% 90%, #efc2b3 0%, #efc2b3 20%, transparent 70%);
   background-blend-mode: lighten, lighten, lighten;
 }
