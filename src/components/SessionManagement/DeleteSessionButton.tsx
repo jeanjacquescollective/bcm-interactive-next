@@ -33,19 +33,14 @@ const DeleteSessionButton: React.FC<DeleteSessionButtonProps> = ({
             <button
                 onClick={handleDeleteClick}
                 disabled={disabled}
-                style={{
-                    color: "#d32f2f",
-                    border: "1px solid #d32f2f",
-                    background: "transparent",
-                    padding: "8px 16px",
-                    borderRadius: "4px",
-                    display: "flex",
-                    alignItems: "center",
-                    cursor: disabled ? "not-allowed" : "pointer",
-                    textTransform: "none",
-                    opacity: disabled ? 0.5 : 1,
-                    gap: "8px"
-                }}
+                className={`
+                    flex items-center gap-2 px-4 py-2 rounded border
+                    border-[#d32f2f] text-[#d32f2f] bg-transparent
+                    text-base font-normal
+                    transition-opacity
+                    ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-[#d32f2f]/10 cursor-pointer"}
+                    dark:border-red-600 dark:text-red-400 dark:hover:bg-red-950
+                `}
                 aria-label={sessionName ? `Delete "${sessionName}"` : "Delete Session"}
             >
                 <DeleteIcon size={18} />

@@ -73,7 +73,7 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
   };
 
   return (
-    <div className="sticky top-0 z-20 w-full flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4 p-4 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-md transition-colors">
+    <div className="sticky top-0 z-20 w-full flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4 p-4 bg-white/40 dark:bg-gray-900/40 backdrop-blur-md shadow-lg border border-white/30 dark:border-gray-700/30 transition-colors ">
       <div className="flex items-center gap-2 flex-wrap">
         <label htmlFor="session-select" className="text-sm text-gray-900 dark:text-gray-200">
           Session:
