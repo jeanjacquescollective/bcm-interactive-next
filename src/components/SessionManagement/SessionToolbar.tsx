@@ -1,126 +1,127 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+
+import React, { useEffect, useRef, useState } from "react";
 import DeleteSessionButton from "./DeleteSessionButton";
 import CreateSessionButton from "./CreateSessionButton";
-import { CanvasData, CanvasSession } from "@/types/CanvasSession";
+import { useCanvasDataContext } from "@/contexts/CanvasData";
+import { EMPTY_SESSION } from "@/lib/actions/sessionActions";
+import { CanvasSession } from "@/types/CanvasSession";
 
 interface SessionToolbarProps {
-    sessions: CanvasSession[];
-    selectedSessionId: string | null;
-    setSelectedSessionId: (id: string | null) => void;
-    setSessions: (updater: (prev: CanvasSession[]) => CanvasSession[]) => void;
-    setCanvasData: (data: CanvasData) => void;
-    handleSessionNameChange: (newName: string) => void;
-    handleSessionCreate: (name: string) => void;
-    handleSessionDelete: (id: string) => void;
-    getLastModified: () => string;
-    EMPTY_SESSION: CanvasSession;
+  handleSessionNameChange: (newName: string) => void;
+  handleSessionCreate: (name: string) => void;
+  handleSessionDelete: (id: string) => void;
+  getLastModified: () => string;
+  updateURLWithSessionId: (id: string | null) => void;
 }
 
 const SessionToolbar: React.FC<SessionToolbarProps> = ({
-    sessions,
-    selectedSessionId,
-    setSelectedSessionId,
-    setSessions,
-    setCanvasData,
-    handleSessionNameChange,
-    handleSessionCreate,
-    handleSessionDelete,
-    getLastModified,
-    EMPTY_SESSION,
+  handleSessionNameChange,
+  handleSessionCreate,
+  handleSessionDelete,
+  getLastModified,
+  updateURLWithSessionId,
 }) => {
-    const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const {
+    sessionId,
+    setSessionId,
+    sessionsData,
+    setSessionsData,
+    setCanvasData,
+  } = useCanvasDataContext();
 
-    useEffect(() => {
-        inputRef.current?.focus();
-    }, [selectedSessionId]);
+  const selectedSession = sessionsData.find((s) => s.id?.toString() === sessionId);
+  const [localName, setLocalName] = useState(selectedSession?.name ?? "");
 
-    const getSelectedSession = () =>
-        sessions.find((s) => s.id != null && s.id.toString() === selectedSessionId);
+  // Update input value when session changes
+  useEffect(() => {
+    setLocalName(selectedSession?.name ?? "");
+    inputRef.current?.focus();
+  }, [selectedSession?.id, selectedSession?.name]);
 
-    const handleSessionSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedSessionId(e.target.value);
-    };
+  const handleSessionSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = e.target.value;
+    const session = sessionsData.find((s) => s.id?.toString() === id);
 
-    const handleSessionNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        handleSessionNameChange(e.target.value);
-    };
+    setSessionId(id);
+    setCanvasData(session?.data ?? EMPTY_SESSION.data);
+    updateURLWithSessionId(id); 
+  };
 
-    const handleDelete = () => {
-        if (!selectedSessionId) return;
-        handleSessionDelete(selectedSessionId);
-        setSessions((prev) => {
-            const updated = prev.filter(
-                (s) => s.id != null && s.id.toString() !== selectedSessionId
-            );
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalName(e.target.value);
+  };
 
-            if (updated.length > 0) {
-                const firstSession = updated[0];
-                setSelectedSessionId(firstSession.id?.toString() ?? null);
-                setCanvasData(firstSession.data);
-            } else {
-                setSelectedSessionId(EMPTY_SESSION.id?.toString() ?? null);
-                setCanvasData(EMPTY_SESSION.data);
-            }
+  const handleNameBlur = () => {
+    if (localName.trim() && localName !== selectedSession?.name) {
+      handleSessionNameChange(localName.trim());
+    }
+  };
 
-            return updated;
-        });
+  const handleDelete = () => {
+    if (!sessionId) return;
+    handleSessionDelete(sessionId);
 
-    };
+    setSessionsData((prev: CanvasSession[]) => {
+      const updated = prev.filter((s) => s.id?.toString() !== sessionId);
+      const next = updated[0] ?? EMPTY_SESSION;
+      setSessionId(next.id?.toString() ?? "");
+      setCanvasData(next.data);
+      return updated;
+    });
+  };
 
-    const renderSessionOptions = () =>
-        sessions.map((session) => (
-            <option key={session.id?.toString()} value={session.id?.toString()}>
+  return (
+    <div className="sticky top-0 z-20 w-full flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4 p-4 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-md transition-colors">
+      <div className="flex items-center gap-2 flex-wrap">
+        <label htmlFor="session-select" className="text-sm text-gray-900 dark:text-gray-200">
+          Session:
+        </label>
+
+        <select
+          id="session-select"
+          className="border border-gray-300 dark:border-gray-700 px-2 py-1 rounded bg-white dark:bg-gray-800 dark:text-gray-100 transition-colors"
+          value={sessionId ?? ""}
+          onChange={handleSessionSelectChange}
+          aria-label="Select session"
+        >
+          {sessionsData.map((session) => {
+            const sessionKey = session.id?.toString() ?? "";
+            return (
+              <option key={sessionKey} value={sessionKey}>
                 {session.name || "Untitled Session"}
-            </option>
-        ));
+              </option>
+            );
+          })}
+        </select>
 
-    const selectedSession = getSelectedSession();
+        <input
+          ref={inputRef}
+          className="border border-gray-300 dark:border-gray-700 px-2 py-1 rounded bg-white dark:bg-gray-800 dark:text-gray-100 transition-colors"
+          type="text"
+          value={localName}
+          onChange={handleInputChange}
+          onBlur={handleNameBlur}
+          placeholder="Session name"
+          aria-label="Edit session name"
+          style={{ minWidth: 120 }}
+        />
 
-    return (
-        <div className="sticky top-0 z-20 w-full flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
-            {/* Left: Session Controls */}
-            <div className="flex items-center gap-2 flex-wrap">
-                <label htmlFor="session-select" className="text-sm">
-                    Session:
-                </label>
+        <DeleteSessionButton
+          onDelete={handleDelete}
+          sessionName={selectedSession?.name ?? ""}
+          disabled={sessionsData.length <= 1}
+        />
 
-                <select
-                    id="session-select"
-                    className="border px-2 py-1 rounded bg-white dark:bg-gray-800"
-                    value={selectedSessionId ?? ""}
-                    onChange={handleSessionSelectChange}
-                    aria-label="Select session"
-                >
-                    {renderSessionOptions()}
-                </select>
+        <CreateSessionButton onCreate={handleSessionCreate} />
+      </div>
 
-                <input
-                    ref={inputRef}
-                    className="border px-2 py-1 rounded"
-                    type="text"
-                    value={selectedSession?.name ?? ""}
-                    onChange={handleSessionNameInputChange}
-                    placeholder="Session name"
-                    aria-label="Edit session name"
-                    style={{ minWidth: 120 }}
-                />
-
-                <DeleteSessionButton
-                    onDelete={handleDelete}
-                    sessionName={selectedSession?.name ?? ""}
-                    disabled={sessions.length <= 1}
-                />
-
-                <CreateSessionButton onCreate={handleSessionCreate} />
-            </div>
-
-            {/* Right: Saved Timestamp */}
-            <div className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                Saved: {getLastModified()}
-            </div>
-        </div>
-    );
+      <div className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap transition-colors">
+        Saved: {getLastModified()}
+      </div>
+    </div>
+  );
 };
 
 export default SessionToolbar;

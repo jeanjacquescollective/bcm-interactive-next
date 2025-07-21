@@ -56,7 +56,7 @@ const Modals: React.FC = () => {
                 )}
                 {openBrainstormModal && (
                     <BrainstormModal
-                        onClose={() => setOpenBrainstormModal && setOpenBrainstormModal(false)}
+                        onClose={() => setOpenBrainstormModal && setOpenBrainstormModal(false) }
                     />
                 )}
                 {openImportModal && (

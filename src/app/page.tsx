@@ -6,7 +6,7 @@ export default function HomePage() {
   // No params available on the root page, so no language check needed here
 
   return (
-    <div className="flex flex-col bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="flex flex-col min-h-screen">
       <header className="shadow p-4">
         <h1 className="text-2xl font-bold">Business Model Canvas</h1>
       </header>
@@ -34,7 +34,7 @@ export default function HomePage() {
           </div>
         </div>
       </main>
-      <Footer></Footer>
+      <Footer />
     </div>
   );
 }

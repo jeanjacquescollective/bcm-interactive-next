@@ -28,7 +28,6 @@ const NoteModal: React.FC<NoteModalProps> = ({
 
   // Default to first color if no noteColor passed
   const defaultColor = colors[0].hex;
-  console.log("Default color:", defaultColor);
 
   // Local state for form inputs
   const [currentNoteTitle, setCurrentNoteTitle] = useState(note?.title || "");

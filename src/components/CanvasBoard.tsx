@@ -16,28 +16,28 @@ import { CanvasUI } from "@/contexts/CanvasUI";
 import { ManagedUI } from "@/contexts/ManagedUI";
 import { CanvasData } from "@/types/CanvasSession";
 import { Note } from "@/types/NoteList";
+import { useCanvasDataContext } from "@/contexts/CanvasData";
 
 interface CanvasBoardProps {
-  canvasData: CanvasData;
   COLORS: string[];
+  handleDragEnd: (event: import("@dnd-kit/core").DragEndEvent) => void;
   handleSegmentChange: (
     segmentKey: keyof CanvasData,
     items: Note[],
     questions: string[]
   ) => void;
-  handleDragEnd: (event: import("@dnd-kit/core").DragEndEvent) => void;
 }
 
-const CanvasBoard: React.FC<CanvasBoardProps> = ({
-  canvasData,
-  handleSegmentChange,
-  handleDragEnd,
-}) => {
+const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentChange }) => {
   const canvasUI = useContext(CanvasUI);
   const managedUI = useContext(ManagedUI);
   const [zoom, setZoom] = useState(1);
 
-  // ✅ Prevent default browser zoom when using Ctrl/Cmd + Scroll
+  if (!canvasUI) throw new Error("CanvasBoard must be used within CanvasUIProvider");
+
+  const { segmentKey } = canvasUI;
+  const { canvasData } = useCanvasDataContext();
+
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (e.ctrlKey || e.metaKey) e.preventDefault();
@@ -46,44 +46,38 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({
     return () => window.removeEventListener("wheel", handleWheel);
   }, []);
 
-  // ✅ Enable drag only when not zoomed in
   useEffect(() => {
-    if (typeof canvasUI?.setIsDraggable === "function") {
-      canvasUI.setIsDraggable(zoom <= 1);
-    }
+    canvasUI.setIsDraggable?.(zoom <= 1);
   }, [zoom, canvasUI]);
 
-  // ✅ Add or update notes
   const addNoteHandler = useCallback(
     (note: Omit<Note, "id"> | Note) => {
-      const segmentKey = canvasUI?.segmentKey ?? "brainStormArea";
-      const segment = canvasData[segmentKey];
+      const key = segmentKey ?? "brainStormArea";
+      const segment = canvasData[key];
+      if (!segment) return;
 
+      let updatedItems: Note[];
       if ("id" in note && note.id !== undefined) {
-        const updatedItems = (segment?.items ?? []).map((item: Note) =>
+        updatedItems = segment.items.map((item) =>
           item.id === note.id ? { ...item, ...note } : item
         );
-        handleSegmentChange(segmentKey, updatedItems, segment?.questions ?? []);
       } else {
         const newNote = { ...note, id: Date.now().toString() };
-        handleSegmentChange(
-          segmentKey,
-          [...(segment?.items ?? []), newNote],
-          segment?.questions ?? []
-        );
+        updatedItems = [...segment.items, newNote];
       }
+
+      handleSegmentChange(key, updatedItems, segment.questions);
+      canvasUI.setSegmentKey?.(key);
     },
-    [canvasData, canvasUI?.segmentKey, handleSegmentChange]
+    [canvasData, segmentKey, handleSegmentChange, canvasUI]
   );
 
-  // ✅ Check visibility for conditional rendering
   const shouldShowSegment = useCallback(
     (segmentKey: keyof CanvasData) =>
       !managedUI?.focusedSegment || managedUI.focusedSegment === segmentKey,
     [managedUI?.focusedSegment]
   );
 
-  // ✅ Memoized board rendering for performance
   const board = useMemo(() => {
     if (managedUI?.focusedSegment) {
       const title = managedUI.focusedSegment
@@ -96,7 +90,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({
             segmentTitle={title}
             segmentData={canvasData[managedUI.focusedSegment]}
             handleSegmentChange={handleSegmentChange}
-            className="w-full h-full"
+            extraClasses="w-full h-full"
           />
         </div>
       );
@@ -104,100 +98,100 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({
 
     return (
       <div className="w-full h-full rounded-lg shadow-md bg-gray-50 dark:bg-gray-900">
-        <div className="grid grid-cols-5 gap-2 p-4 bg-gray-100 dark:bg-gray-800 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 p-4 bg-gray-100 dark:bg-gray-800 w-full">
           {shouldShowSegment("keyPartners") && (
             <CanvasSegment
               segmentTitle="Key Partners"
               segmentData={canvasData.keyPartners}
               handleSegmentChange={handleSegmentChange}
-              className="flex flex-col col-span-1"
+              extraClasses="flex flex-col col-span-1 w-full"
             />
           )}
 
           {(shouldShowSegment("keyActivities") ||
             shouldShowSegment("keyResources")) && (
-            <div className="flex flex-col gap-2 col-span-1">
-              {shouldShowSegment("keyActivities") && (
-                <CanvasSegment
-                  segmentTitle="Key Activities"
-                  segmentData={canvasData.keyActivities}
-                  handleSegmentChange={handleSegmentChange}
-                  className="flex-1"
-                />
-              )}
-              {shouldShowSegment("keyResources") && (
-                <CanvasSegment
-                  segmentTitle="Key Resources"
-                  segmentData={canvasData.keyResources}
-                  handleSegmentChange={handleSegmentChange}
-                  className="flex-1"
-                />
-              )}
-            </div>
-          )}
+              <div className="flex flex-col gap-2 col-span-1 w-full">
+                {shouldShowSegment("keyActivities") && (
+                  <CanvasSegment
+                    segmentTitle="Key Activities"
+                    segmentData={canvasData.keyActivities}
+                    handleSegmentChange={handleSegmentChange}
+                    extraClasses="flex-1 w-full"
+                  />
+                )}
+                {shouldShowSegment("keyResources") && (
+                  <CanvasSegment
+                    segmentTitle="Key Resources"
+                    segmentData={canvasData.keyResources}
+                    handleSegmentChange={handleSegmentChange}
+                    extraClasses="flex-1 w-full"
+                  />
+                )}
+              </div>
+            )}
 
           {shouldShowSegment("valuePropositions") && (
             <CanvasSegment
               segmentTitle="Value Propositions"
               segmentData={canvasData.valuePropositions}
               handleSegmentChange={handleSegmentChange}
-              className="flex flex-col col-span-2"
+              extraClasses="flex flex-col col-span-2 w-full"
             />
           )}
 
           {(shouldShowSegment("customerRelationships") ||
             shouldShowSegment("channels")) && (
-            <div className="flex flex-col gap-2 col-span-1">
-              {shouldShowSegment("customerRelationships") && (
-                <CanvasSegment
-                  segmentTitle="Customer Relationships"
-                  segmentData={canvasData.customerRelationships}
-                  handleSegmentChange={handleSegmentChange}
-                  className="flex-1"
-                />
-              )}
-              {shouldShowSegment("channels") && (
-                <CanvasSegment
-                  segmentTitle="Channels"
-                  segmentData={canvasData.channels}
-                  handleSegmentChange={handleSegmentChange}
-                  className="flex-1"
-                />
-              )}
-            </div>
-          )}
+              <div className="flex flex-col gap-2 col-span-1 w-full">
+                {shouldShowSegment("customerRelationships") && (
+                  <CanvasSegment
+                    segmentTitle="Customer Relationships"
+                    segmentData={canvasData.customerRelationships}
+                    handleSegmentChange={handleSegmentChange}
+                    extraClasses="flex-1 w-full"
+                  />
+                )}
+                {shouldShowSegment("channels") && (
+                  <CanvasSegment
+                    segmentTitle="Channels"
+                    segmentData={canvasData.channels}
+                    handleSegmentChange={handleSegmentChange}
+                    extraClasses="flex-1 w-full"
+                  />
+                )}
+              </div>
+            )}
 
           {shouldShowSegment("customerSegments") && (
             <CanvasSegment
               segmentTitle="Customer Segments"
               segmentData={canvasData.customerSegments}
               handleSegmentChange={handleSegmentChange}
-              className="col-span-1"
+              extraClasses="col-span-1 w-full"
             />
           )}
         </div>
 
         {(shouldShowSegment("costStructure") ||
           shouldShowSegment("revenueStreams")) && (
-          <div className="flex flex-col md:flex-row p-4 gap-2 bg-gray-100 dark:bg-gray-800 w-full">
-            {shouldShowSegment("costStructure") && (
-              <CanvasSegment
-                segmentTitle="Cost Structure"
-                segmentData={canvasData.costStructure}
-                handleSegmentChange={handleSegmentChange}
-                className="flex-1"
-              />
-            )}
-            {shouldShowSegment("revenueStreams") && (
-              <CanvasSegment
-                segmentTitle="Revenue Streams"
-                segmentData={canvasData.revenueStreams}
-                handleSegmentChange={handleSegmentChange}
-                className="flex-1"
-              />
-            )}
-          </div>
-        )}
+            <div className="flex flex-col md:flex-row p-4 gap-2 bg-gray-100 dark:bg-gray-800 w-full">
+              {shouldShowSegment("costStructure") && (
+                <CanvasSegment
+                  segmentTitle="Cost Structure"
+                  segmentData={canvasData.costStructure}
+                  handleSegmentChange={handleSegmentChange}
+                  extraClasses="flex-1 w-full"
+                />
+              )}
+              {shouldShowSegment("revenueStreams") && (
+                <CanvasSegment
+                  segmentTitle="Revenue Streams"
+                  segmentData={canvasData.revenueStreams}
+                  handleSegmentChange={handleSegmentChange}
+                  extraClasses="flex-1 w-full"
+                />
+              )}
+            </div>
+          )}
 
         {shouldShowSegment("brainStormArea") && (
           <div className="flex p-4 shadow gap-2 bg-gray-100 dark:bg-gray-800 w-full">
@@ -205,13 +199,14 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({
               segmentTitle="Brainstorm Area"
               segmentData={canvasData.brainStormArea}
               handleSegmentChange={handleSegmentChange}
-              className="flex-1"
+              extraClasses="flex-1 w-full"
             />
           </div>
         )}
       </div>
     );
   }, [canvasData, handleSegmentChange, managedUI?.focusedSegment, shouldShowSegment]);
+
 
   return (
     <>
@@ -226,10 +221,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({
           wrapperStyle={{ width: "100%", height: "100%", overflow: "visible" }}
           contentStyle={{ width: "100%", height: "100%" }}
         >
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             {board}
           </DndContext>
         </TransformComponent>

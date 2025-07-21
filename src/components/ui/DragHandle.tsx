@@ -15,8 +15,8 @@ const DragHandle: React.FC<DragElementProps> = ({ listeners = {}, showDragHandle
             {...listeners}
             className={`mr-2 transition-colors ${
             shouldShowHandle
-                ? "cursor-grab text-black dark:text-white hover:text-gray-200 dark:hover:text-gray-100"
-                : "cursor-not-allowed text-transparent dark:text-transparent pointer-events-none"
+                ? "cursor-grab text-black hover:text-gray-700 dark:text-white dark:hover:text-gray-100"
+                : "cursor-not-allowed text-transparent pointer-events-none"
             }`}
             title="Drag"
             aria-disabled={!shouldShowHandle}

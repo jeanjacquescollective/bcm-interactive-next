@@ -19,11 +19,15 @@ export default function RootLayout({
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
       </head>
-      <body className="min-h-screen flex flex-col bg-[rgba(255,255,255,0.6)] backdrop-blur-md bg-gradient-to-br from-white/70 via-blue-100/60 to-purple-100/60 text-gray-900 box-border"  >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+
+      <body
+        className="min-h-screen flex flex-col box-border bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+      >
+        <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
           {children}
+          <Toaster />
         </ThemeProvider>
-        <Toaster />
+
       </body>
     </html>
   );

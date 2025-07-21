@@ -11,7 +11,7 @@ interface CanvasSegmentProps {
   segmentTitle: string;
   segmentData: CanvasSegmentData;
   handleSegmentChange: (segmentKey: keyof CanvasData, items: Note[], questions: string[]) => void;
-    className?: string;
+  extraClasses?: string;
 }
 
 const CanvasSegment: React.FC<CanvasSegmentProps> = ({
@@ -72,7 +72,7 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
   };
 
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full h-full box-border flex flex-1 flex-col bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100  ${className}" data-type="canvas-segment-inner">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full h-full box-border flex flex-1 flex-col bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100  ${extraClasses}" data-type="canvas-segment-inner">
       <div className="flex items-center mb-4">
         <h2 className="flex-1 m-0 text-xl font-bold">{segmentTitle}</h2>
         <button

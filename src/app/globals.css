@@ -1,26 +1,35 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
-
+@variant dark (&:where([data-theme="dark"] *));
+/* Light mode variables */
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 245, 247, 250;
+  --color-white: #FFFFFF;
+  --color-purple: #B59CC5;
+  --color-cyan: #00A3BD;
+  --color-peach: #EFC2B3;
+  --color-pink: #DEB8C4;
+  --color-blue: #6D98BB;
+  --color-greyblue: #99B9BD;
 }
 
-body[data-theme="dark"]  {
+/* Dark mode overrides */
+.dark {
   --foreground-rgb: 255, 255, 255;
-  --background-rgb: 24, 26, 32;
+  --background-rgb: 17, 24, 39; /* Tailwind's gray-900 */
+  --color-white: #1f2937; /* optional darker white substitute */
+  --color-purple: #A78BFA;
+  --color-cyan: #22D3EE;
+  --color-peach: #FBCFE8;
+  --color-pink: #F9A8D4;
+  --color-blue: #3B82F6;
+  --color-greyblue: #64748B;
 }
 
-body {
+/* Example custom usage */
+html {
+  background-color: rgb(var(--background-rgb));
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
 }
 
-.canvas-segment {
-  transition: all 0.3s ease;
-}
-
-.canvas-segment:hover {
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}

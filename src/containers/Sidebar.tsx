@@ -16,10 +16,9 @@ import {
   HelpCircle,
 } from "react-feather";
 import SidebarToggleButton from "@/components/sidebar/SidebarToggleButton";
-import Tooltip from "@/components/ui/Tooltip";
+import Tooltip from "@/components/sidebar/Tooltip";
 import SidebarButton from "@/components/sidebar/SidebarButton";
 import SidebarFooter from "@/components/sidebar/SidebarFooter";
-import ColorSchemeToggle from "@/components/ui/ColorSchemeToggle";
 import { ManagedUI } from "@/contexts/ManagedUI";
 import { CanvasData } from "@/types/CanvasSession";
 
@@ -28,6 +27,9 @@ const ExportDropdown = dynamic(() => import("@/components/sidebar/ExportDropdown
   ssr: false,
 });
 const ImportDropdown = dynamic(() => import("@/components/sidebar/ImportDropdown"), {
+  ssr: false,
+});
+const ColorSchemeToggle = dynamic(() => import("@/components/sidebar/ColorSchemeToggle"), {
   ssr: false,
 });
 

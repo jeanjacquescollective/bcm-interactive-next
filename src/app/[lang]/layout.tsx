@@ -16,6 +16,7 @@ import { ReactNode } from "react";
 import Modals from "@components/modals/Modals";
 
 import { ManagedUIProvider } from "@/contexts/ManagedUI";
+import { CanvasDataProvider } from "@/contexts/CanvasData";
 
 
 export default async function RootLayout({
@@ -26,12 +27,12 @@ export default async function RootLayout({
   // const { lang } = await params;
 
   return (
-
       <ManagedUIProvider>
-
-        {children}
-        <Modals />
+        <CanvasDataProvider>
+          {children}
+          <Modals />
+        </CanvasDataProvider>
       </ManagedUIProvider>
-
   );
 }
+
