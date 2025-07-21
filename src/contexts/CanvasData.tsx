@@ -78,7 +78,7 @@ const setSessionId = (id: string) => {
     }
 
     fetchData();
-  });
+  }, []);
 
   useEffect(() => {
     if (sessionId && sessionsData.length > 0) {
