@@ -26,7 +26,7 @@ export default function HomePage() {
               🇳🇱 Nederlands
             </Link>
             <Link
-              href="/en"
+              href="/en-US"
               className="px-8 py-4 rounded-xl bg-yellow-400/80 text-gray-900 font-semibold text-xl shadow-lg hover:bg-yellow-500/90 transition backdrop-blur-sm border border-white/20"
             >
               🇬🇧 English
