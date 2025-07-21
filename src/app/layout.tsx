@@ -21,7 +21,7 @@ export default function RootLayout({
       </head>
 
       <body
-        className="min-h-screen flex flex-col box-border bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+        className="min-h-screen flex flex-col box-border gradient-haven dark:gradient-haven text-gray-900 dark:text-gray-100"
       >
         <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
           {children}

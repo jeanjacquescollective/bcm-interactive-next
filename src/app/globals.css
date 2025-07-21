@@ -33,3 +33,10 @@ html {
   color: rgb(var(--foreground-rgb));
 }
 
+.gradient-haven {
+  background: 
+    radial-gradient(circle at 75% 35%, #00a3bd 0%, #00a3bd 40%, transparent 70%),
+    radial-gradient(circle at 15% 55%, #b39cc5 0%, #b39cc5 40%, transparent 70%),
+    radial-gradient(circle at 85% 85%, #efc2b3 0%, #efc2b3 40%, transparent 70%);
+  background-blend-mode: lighten, lighten, lighten;
+}

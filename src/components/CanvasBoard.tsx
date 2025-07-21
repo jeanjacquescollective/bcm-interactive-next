@@ -85,7 +85,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
         .replace(/^./, (str) => str.toUpperCase());
 
       return (
-        <div className="flex flex-col w-full h-full p-4 bg-gray-100 dark:bg-gray-800 justify-center items-center">
+        <div className="flex flex-col w-full h-full p-4 bg-gray-100 dark:bg-gray-800 justify-center items-center ">
           <CanvasSegment
             segmentTitle={title}
             segmentData={canvasData[managedUI.focusedSegment]}
@@ -97,8 +97,8 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
     }
 
     return (
-      <div className="w-full h-full rounded-lg shadow-md bg-gray-50 dark:bg-gray-900">
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 p-4 bg-gray-100 dark:bg-gray-800 w-full">
+      <div className="w-full h-full rounded-lg shadow-md">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 p-4 w-full">
           {shouldShowSegment("keyPartners") && (
             <CanvasSegment
               segmentTitle="Key Partners"
@@ -173,7 +173,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
 
         {(shouldShowSegment("costStructure") ||
           shouldShowSegment("revenueStreams")) && (
-            <div className="flex flex-col md:flex-row p-4 gap-2 bg-gray-100 dark:bg-gray-800 w-full">
+            <div className="flex flex-col md:flex-row p-4 gap-2 w-full">
               {shouldShowSegment("costStructure") && (
                 <CanvasSegment
                   segmentTitle="Cost Structure"
@@ -194,7 +194,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
           )}
 
         {shouldShowSegment("brainStormArea") && (
-          <div className="flex p-4 shadow gap-2 bg-gray-100 dark:bg-gray-800 w-full">
+          <div className="flex p-4 shadow gap-2 w-full">
             <CanvasSegment
               segmentTitle="Brainstorm Area"
               segmentData={canvasData.brainStormArea}
