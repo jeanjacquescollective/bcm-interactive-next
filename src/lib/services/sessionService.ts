@@ -13,6 +13,38 @@ export class SessionService {
   }
 
   async getAll(): Promise<CanvasSession[]> {
+    // Example: Fetch segment questions from Supabase for each session segment
+    // This is just a demonstration of how you might integrate the logic.
+    // You may want to refactor this for your actual use-case.
+
+    // If you want to fetch questions for all segments and store them in sessions,
+    // you could do something like this (pseudo-code):
+
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const sessions = await this.storage.loadSessions();
+    for (const session of sessions) {
+      console.log(`Loading questions for session: ${JSON.stringify(session.data)}`);
+      for (const key of Object.keys(session.data)) {
+        const { data, error } = await supabase
+          .from("canvas_segment_questions")
+          .select("questions")
+          .eq("segment_key", key)
+          .single();
+        if (!error && data?.questions) {
+
+          const lang = typeof navigator !== "undefined" && navigator.language?.startsWith("nl") ? "nl" : "en";
+          const questions = data.questions[lang] || data.questions["en"] || [];
+          session.data[key].questions = questions;
+          // console.log(`Loaded ${questions.length} questions for segment ${key}`);
+        }
+      }
+    }
+    // Optionally, save updated sessions back to storage
+    await this.storage.saveSessions(sessions);
     return await this.storage.loadSessions();
   }
 

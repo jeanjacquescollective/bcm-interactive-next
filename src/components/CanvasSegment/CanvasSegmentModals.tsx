@@ -19,6 +19,10 @@ const CanvasSegmentModals: React.FC<CanvasSegmentModalsProps> = ({
   onConfirmDelete,
   segmentQuestions
 }) => {
+  // console.log(segmentQuestions);
+  if (!segmentQuestions || segmentQuestions.length === 0) {
+    return null; // No questions to display
+  }
   return (
     <>
       {showQuestions && (
