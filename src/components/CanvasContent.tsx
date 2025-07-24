@@ -18,7 +18,9 @@ const CanvasContent: React.FC<{ COLORS: string[] }> = ({ COLORS }) => {
     const map: Record<string, keyof CanvasData> = {};
     for (const [segmentKey, segment] of Object.entries(canvasData)) {
       for (const note of segment.items) {
-        map[note.id] = segmentKey as keyof CanvasData;
+        if (typeof note.id === "string") {
+          map[note.id] = segmentKey as keyof CanvasData;
+        }
       }
     }
     return map;
@@ -32,7 +34,7 @@ const CanvasContent: React.FC<{ COLORS: string[] }> = ({ COLORS }) => {
     const newCanvasData: CanvasData = {
       ...canvasData,
       [segmentKey]: {
-        key: segmentKey,
+        key: segmentKey as string,
         items,
         questions,
       },

@@ -52,7 +52,7 @@ export const updateSegment = (
   questions: string[]
 ): CanvasData => ({
   ...canvasData,
-  [segmentKey]: { items, questions, key: segmentKey },
+  [segmentKey]: { items, questions, key: String(segmentKey) },
 });
 
 export const addNote = (
@@ -63,7 +63,7 @@ export const addNote = (
   ...canvasData,
   [segmentKey]: {
     ...canvasData[segmentKey],
-    items: [...canvasData[segmentKey].items, { ...note, id: Date.now() }],
+    items: [...canvasData[segmentKey].items, { ...note, id: Date.now().toString() }],
   },
 });
 

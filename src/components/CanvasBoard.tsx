@@ -80,9 +80,9 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
 
   const board = useMemo(() => {
     if (managedUI?.focusedSegment) {
-      const title = managedUI.focusedSegment
+      const title = String(managedUI.focusedSegment)
         .replace(/([A-Z])/g, " $1")
-        .replace(/^./, (str) => str.toUpperCase());
+        .replace(/^./, (str: string) => str.toUpperCase());
 
       return (
         <div className="flex flex-col w-full h-full p-4 bg-gray-100 dark:bg-gray-800 justify-center items-center ">

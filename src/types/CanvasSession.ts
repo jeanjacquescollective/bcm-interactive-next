@@ -17,6 +17,8 @@ export interface CanvasData {
     costStructure: CanvasSegmentData;
     revenueStreams: CanvasSegmentData;
     brainStormArea: CanvasSegmentData;
+    [key: string]: CanvasSegmentData; // Add this index signature
+
 }
 
 export interface CanvasSession {
