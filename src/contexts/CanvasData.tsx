@@ -11,6 +11,7 @@ import {
   ReactNode,
   useContext,
   useCallback,
+  useMemo,
 } from "react";
 import { SessionService } from "@/lib/services/sessionService";
 import { localStorageProvider } from "@/lib/storage/client/localStorage";
@@ -33,21 +34,21 @@ export const CanvasDataContext = createContext<CanvasDataContextType | undefined
 export function CanvasDataProvider({ children }: { children: ReactNode }) {
   const [sessionsData, setSessionsData] = useState<CanvasSession[]>([]);
   const [canvasData, setCanvasData] = useState<CanvasData>(EMPTY_SESSION.data);
-  const sessionService = new SessionService(localStorageProvider);
-
+  // const sessionService = new SessionService(localStorageProvider);
+const sessionService = useMemo(() => new SessionService(localStorageProvider), []);
 
   const [sessionId, _setSessionId] = useState<string | null>(null);
 
-const setSessionId = (id: string) => {
-  _setSessionId(id);
-  const url = new URL(window.location.href);
-  if (id) {
-    url.searchParams.set("sessionId", id);
-  } else {
-    url.searchParams.delete("sessionId");
-  }
-  window.history.replaceState({}, "", url.toString());
-};
+  const setSessionId = (id: string) => {
+    _setSessionId(id);
+    const url = new URL(window.location.href);
+    if (id) {
+      url.searchParams.set("sessionId", id);
+    } else {
+      url.searchParams.delete("sessionId");
+    }
+    window.history.replaceState({}, "", url.toString());
+  };
 
   const updateURLWithSessionId = (id: string) => {
     const url = new URL(window.location.href);
@@ -78,7 +79,7 @@ const setSessionId = (id: string) => {
     }
 
     fetchData();
-  }, []);
+  }, [sessionService]);
 
   useEffect(() => {
     if (sessionId && sessionsData.length > 0) {
@@ -94,7 +95,7 @@ const setSessionId = (id: string) => {
       const updated = await sessionService.update(sessionId, { data: newData });
       setSessionsData(updated);
     },
-    [sessionId]
+    [sessionId, sessionService]
   );
 
   const createSession = async (name: string) => {

@@ -4,16 +4,16 @@ import { v4 as uuidv4 } from "uuid";
 
 
 export const createEmptyCanvas = (): CanvasData => ({
-  keyPartners: { items: [], questions: [], key: "keyPartners" },
-  keyActivities: { items: [], questions: [], key: "keyActivities" },
-  keyResources: { items: [], questions: [], key: "keyResources" },
-  valuePropositions: { items: [], questions: [], key: "valuePropositions" },
-  customerRelationships: { items: [], questions: [], key: "customerRelationships" },
-  channels: { items: [], questions: [], key: "channels" },
-  customerSegments: { items: [], questions: [], key: "customerSegments" },
-  costStructure: { items: [], questions: [], key: "costStructure" },
-  revenueStreams: { items: [], questions: [], key: "revenueStreams" },
-  brainStormArea: { items: [], questions: [], key: "brainStormArea" },
+  keyPartners: { items: [], questions: { nl: [], en: [] }, key: "keyPartners" },
+  keyActivities: { items: [], questions: { nl: [], en: [] }, key: "keyActivities" },
+  keyResources: { items: [], questions: { nl: [], en: [] }, key: "keyResources" },
+  valuePropositions: { items: [], questions: { nl: [], en: [] }, key: "valuePropositions" },
+  customerRelationships: { items: [], questions: { nl: [], en: [] }, key: "customerRelationships" },
+  channels: { items: [], questions: { nl: [], en: [] }, key: "channels" },
+  customerSegments: { items: [], questions: { nl: [], en: [] }, key: "customerSegments" },
+  costStructure: { items: [], questions: { nl: [], en: [] }, key: "costStructure" },
+  revenueStreams: { items: [], questions: { nl: [], en: [] }, key: "revenueStreams" },
+  brainStormArea: { items: [], questions: { nl: [], en: [] }, key: "brainStormArea" },
 });
 
 export const EMPTY_SESSION: CanvasSession = {
@@ -49,7 +49,7 @@ export const updateSegment = (
   canvasData: CanvasData,
   segmentKey: keyof CanvasData,
   items: Note[],
-  questions: string[]
+  questions: { nl: string[]; en: string[] }
 ): CanvasData => ({
   ...canvasData,
   [segmentKey]: { items, questions, key: String(segmentKey) },

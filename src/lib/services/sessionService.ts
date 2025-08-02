@@ -36,9 +36,10 @@ export class SessionService {
           .single();
         if (!error && data?.questions) {
 
-          const lang = typeof navigator !== "undefined" && navigator.language?.startsWith("nl") ? "nl" : "en";
-          const questions = data.questions[lang] || data.questions["en"] || [];
-          session.data[key].questions = questions;
+            session.data[key].questions = {
+            nl: data.questions["nl"] || [],
+            en: data.questions["en"] || [],
+            };
           // console.log(`Loaded ${questions.length} questions for segment ${key}`);
         }
       }
@@ -70,16 +71,16 @@ export class SessionService {
     console.log("Adding session with data:", session);
     // Assuming you have a function or constant that provides a default CanvasData object
     const defaultData: CanvasSession["data"] = {
-      keyPartners: { items: [], questions: [], key: "keyPartners" },
-      keyActivities: { items: [], questions: [], key: "keyActivities" },
-      keyResources: { items: [], questions: [], key: "keyResources" },
-      valuePropositions: { items: [], questions: [], key: "valuePropositions" },
-      customerRelationships: { items: [], questions: [], key: "customerRelationships" },
-      channels: { items: [], questions: [], key: "channels" },
-      customerSegments: { items: [], questions: [], key: "customerSegments" },
-      costStructure: { items: [], questions: [], key: "costStructure" },
-      revenueStreams: { items: [], questions: [], key: "revenueStreams" },
-      brainStormArea: { items: [], questions: [], key: "brainStormArea" },
+      keyPartners: { items: [], questions: { nl: [], en: [] }, key: "keyPartners" },
+      keyActivities: { items: [], questions: { nl: [], en: [] }, key: "keyActivities" },
+      keyResources: { items: [], questions: { nl: [], en: [] }, key: "keyResources" },
+      valuePropositions: { items: [], questions: { nl: [], en: [] }, key: "valuePropositions" },
+      customerRelationships: { items: [], questions: { nl: [], en: [] }, key: "customerRelationships" },
+      channels: { items: [], questions: { nl: [], en: [] }, key: "channels" },
+      customerSegments: { items: [], questions: { nl: [], en: [] }, key: "customerSegments" },
+      costStructure: { items: [], questions: { nl: [], en: [] }, key: "costStructure" },
+      revenueStreams: { items: [], questions: { nl: [], en: [] }, key: "revenueStreams" },
+      brainStormArea: { items: [], questions: { nl: [], en: [] }, key: "brainStormArea" },
     };
     const mergedData = { ...defaultData, ...session.data };
     console.log(sessions, session.id);

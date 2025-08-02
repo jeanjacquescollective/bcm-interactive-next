@@ -10,7 +10,7 @@ import { useCanvasSegmentModals } from "@/hooks/useCanvasSegmentModals";
 interface CanvasSegmentProps {
   segmentTitle: string;
   segmentData: CanvasSegmentData;
-  handleSegmentChange: (segmentKey: keyof CanvasData, items: Note[], questions: string[]) => void;
+  handleSegmentChange: (segmentKey: keyof CanvasData, items: Note[], questions: { nl: string[]; en: string[] }) => void;
   extraClasses?: string;
 }
 

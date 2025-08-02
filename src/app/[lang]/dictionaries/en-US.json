@@ -17,5 +17,27 @@
     "addCanvas": "Add Canvas",
     "edit": "Edit",
     "delete": "Delete",
-    "confirmDelete": "Are you sure you want to delete this canvas?"
+    "confirmDelete": "Are you sure you want to delete this canvas?",
+    "modals": {
+        "import": {
+            "title": "Import Canvas",
+            "description": "Import a canvas from a CSV file.",
+            "fileInputLabel": "Select CSV file",
+            "importButtonText": "Import",
+            "cancelButtonText": "Cancel",
+            "successMessage": "Canvas imported successfully!",
+            "errorMessage": "Failed to import canvas. Please check the file format."
+        },
+        "export": {
+            "title": "Export Canvas",
+            "description": "Export the current canvas to a CSV file.",
+            "exportButtonText": "Export",
+            "cancelButtonText": "Cancel"
+        },
+        "questions": {
+            "title": "Questions",
+            "description": "Answer the following questions to complete the canvas."
+        }
+    }
+
 }

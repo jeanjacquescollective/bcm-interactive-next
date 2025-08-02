@@ -71,9 +71,21 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
       return updated;
     });
   };
+  // Show loading spinner if sessionsData is not loaded yet
+  if (!sessionsData) {
+    return (
+      <div className="p-4 text-center text-gray-500 dark:text-gray-400 flex flex-col items-center justify-center">
+        <svg className="animate-spin h-6 w-6 mb-2 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+        Loading sessions...
+      </div>
+    );
+  }
 
   return (
-    <div className="sticky top-0 z-20 w-full flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4 p-4 bg-white/40 dark:bg-gray-900/40 backdrop-blur-md shadow-lg border border-white/30 dark:border-gray-700/30 transition-colors ">
+    <div className="sticky top-0 z-20 w-full flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4 p-4 bg-white/40 dark:bg-gray-900/40 backdrop-blur-md shadow-lg border border-white/30 dark:border-gray-700/30 transition-colors">
       <div className="flex items-center gap-2 flex-wrap">
         <label htmlFor="session-select" className="text-sm text-gray-900 dark:text-gray-200">
           Session:
@@ -85,15 +97,20 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
           value={sessionId ?? ""}
           onChange={handleSessionSelectChange}
           aria-label="Select session"
+          disabled={sessionsData.length === 0}
         >
-          {sessionsData.map((session) => {
-            const sessionKey = session.id?.toString() ?? "";
-            return (
-              <option key={sessionKey} value={sessionKey}>
-                {session.name || "Untitled Session"}
-              </option>
-            );
-          })}
+          {sessionsData.length === 0 ? (
+            <option value="">Loading...</option>
+          ) : (
+            sessionsData.map((session) => {
+              const sessionKey = session.id?.toString() ?? "";
+              return (
+                <option key={sessionKey} value={sessionKey}>
+                  {session.name || "Untitled Session"}
+                </option>
+              );
+            })
+          )}
         </select>
 
         <input
@@ -106,22 +123,23 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
           placeholder="Session name"
           aria-label="Edit session name"
           style={{ minWidth: 120 }}
+          disabled={sessionsData.length === 0}
         />
 
         <DeleteSessionButton
           onDelete={handleDelete}
           sessionName={selectedSession?.name ?? ""}
-          disabled={sessionsData.length <= 1}
+          disabled={sessionsData.length <= 1 || sessionsData.length === 0}
         />
 
         <CreateSessionButton onCreate={handleSessionCreate} />
       </div>
 
       <div className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap transition-colors">
-        Saved: {getLastModified()}
+        {sessionsData.length === 0 ? "No sessions yet." : `Saved: ${getLastModified()}`}
       </div>
     </div>
   );
-};
+}
 
 export default SessionToolbar;

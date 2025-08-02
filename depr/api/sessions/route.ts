@@ -18,16 +18,16 @@ if (typeof window !== "undefined") {
                 created: new Date().toISOString(),
                 lastModified: new Date().toISOString(),
                 data: {
-                    keyPartners: { items: [], questions: [], key: "keyPartners" },
-                    keyActivities: { items: [], questions: [], key: "keyActivities" },
-                    keyResources: { items: [], questions: [], key: "keyResources" },
-                    valuePropositions: { items: [], questions: [], key: "valuePropositions" },
-                    customerRelationships: { items: [], questions: [], key: "customerRelationships" },
-                    channels: { items: [], questions: [], key: "channels" },
-                    customerSegments: { items: [], questions: [], key: "customerSegments" },
-                    costStructure: { items: [], questions: [], key: "costStructure" },
-                    revenueStreams: { items: [], questions: [], key: "revenueStreams" },
-                    brainStormArea: { items: [], questions: [], key: "brainStormArea" },
+                    keyPartners: { items: [], questions: { en: [], nl: [] }, key: "keyPartners" },
+                    keyActivities: { items: [], questions: { en: [], nl: [] }, key: "keyActivities" },
+                    keyResources: { items: [], questions: { en: [], nl: [] }, key: "keyResources" },
+                    valuePropositions: { items: [], questions: { en: [], nl: [] }, key: "valuePropositions" },
+                    customerRelationships: { items: [], questions: { en: [], nl: [] }, key: "customerRelationships" },
+                    channels: { items: [], questions: { en: [], nl: [] }, key: "channels" },
+                    customerSegments: { items: [], questions: { en: [], nl: [] }, key: "customerSegments" },
+                    costStructure: { items: [], questions: { en: [], nl: [] }, key: "costStructure" },
+                    revenueStreams: { items: [], questions: { en: [], nl: [] }, key: "revenueStreams" },
+                    brainStormArea: { items: [], questions: { en: [], nl: [] }, key: "brainStormArea" },
                 }
             }];
         }

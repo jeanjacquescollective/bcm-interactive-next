@@ -24,7 +24,10 @@ interface CanvasBoardProps {
   handleSegmentChange: (
     segmentKey: keyof CanvasData,
     items: Note[],
-    questions: string[]
+    questions: {
+      nl: string[];
+      en: string[];
+    }
   ) => void;
 }
 

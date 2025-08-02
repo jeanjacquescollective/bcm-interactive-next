@@ -3,7 +3,10 @@ import { Note } from "./NoteList";
 
 export interface CanvasSegmentData {
     items: Note[];
-    questions: string[];
+    questions: {
+        nl: string[]
+        en: string[]
+        };
     key: string;
 }
 export interface CanvasData {

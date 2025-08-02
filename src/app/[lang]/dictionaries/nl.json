@@ -17,5 +17,27 @@
   "addCanvas": "Canvas Toevoegen",
   "edit": "Bewerken",
   "delete": "Verwijderen",
-  "confirmDelete": "Weet je zeker dat je deze canvas wilt verwijderen?"
+  "confirmDelete": "Weet je zeker dat je deze canvas wilt verwijderen?",
+  "modals": {
+    "import": {
+      "title": "Canvas Importeren",
+      "description": "Importeer een canvas vanuit een CSV-bestand.",
+      "fileInputLabel": "Selecteer CSV-bestand",
+      "importButtonText": "Importeren",
+      "cancelButtonText": "Annuleren",
+      "successMessage": "Canvas succesvol geïmporteerd!",
+      "errorMessage": "Importeren van canvas mislukt. Controleer het bestandsformaat."
+    },
+    "export": {
+      "title": "Canvas Exporteren",
+      "description": "Exporteer het huidige canvas naar een CSV-bestand.",
+      "exportButtonText": "Exporteren",
+      "cancelButtonText": "Annuleren"
+    },
+    "questions": {
+      "title": "Vragen",
+      "description": "Beantwoord de volgende vragen om het canvas te voltooien."
+    }
+  }
+
 }

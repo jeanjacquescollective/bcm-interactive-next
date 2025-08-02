@@ -29,14 +29,17 @@ const CanvasContent: React.FC<{ COLORS: string[] }> = ({ COLORS }) => {
   const handleSegmentChange = (
     segmentKey: keyof CanvasData,
     items: Note[],
-    questions: string[]
+    questions: { nl: string[]; en: string[] }
   ) => {
     const newCanvasData: CanvasData = {
       ...canvasData,
       [segmentKey]: {
         key: segmentKey as string,
         items,
-        questions,
+        questions: {
+          nl: questions.nl,
+          en: questions.en ?? [],
+        },
       },
     };
     saveSession(newCanvasData);

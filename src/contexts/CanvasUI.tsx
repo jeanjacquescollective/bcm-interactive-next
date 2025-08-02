@@ -2,9 +2,8 @@
 
 import { Note } from "@/types/NoteList";
 import { CanvasData } from "@/types/CanvasSession";
-import { createContext, useState, Dispatch, SetStateAction, ReactNode } from "react";
+import React, { createContext, ReactNode, useState, useMemo, Dispatch, SetStateAction } from "react";
 
-// Define the context type
 interface CanvasUIContextType {
   currentNote: Note | null;
   setCurrentNote: Dispatch<SetStateAction<Note | null>>;
@@ -18,31 +17,53 @@ interface CanvasUIContextType {
   isDraggable: boolean;
   setIsDraggable: (value: boolean) => void;
 
+  language: string;
+  dictionary: Record<string, string>;
 }
 
-// Create the context
 export const CanvasUI = createContext<CanvasUIContextType | undefined>(undefined);
 
-// Context Provider component
-export function CanvasUIProvider({ children }: { children: ReactNode }) {
+export function CanvasUIProvider({
+  children,
+  dictionary,
+  language,
+}: {
+  children: ReactNode;
+  dictionary: Record<string, string>;
+  language: string;
+}) {
   const [currentNote, setCurrentNote] = useState<Note | null>(null);
   const [segmentKey, setSegmentKey] = useState<keyof CanvasData | null>(null);
   const [openNoteModal, setOpenNoteModal] = useState(false);
   const [isDraggable, setIsDraggable] = useState(false);
+  console.log("CanvasUIProvider initialized with dictionary:", dictionary);
+
+  if (!dictionary || Object.keys(dictionary).length === 0) {
+    console.warn("CanvasUIProvider: Dictionary is empty or undefined.");
+  }
+
+  const contextValue = useMemo(() => ({
+    currentNote,
+    setCurrentNote,
+    segmentKey,
+    setSegmentKey,
+    openNoteModal,
+    setOpenNoteModal,
+    isDraggable,
+    setIsDraggable,
+    language,
+    dictionary,
+  }), [
+    currentNote,
+    segmentKey,
+    openNoteModal,
+    isDraggable,
+    language,
+    dictionary,
+  ]);
 
   return (
-    <CanvasUI.Provider
-      value={{
-        currentNote,
-        setCurrentNote,
-        segmentKey,
-        setSegmentKey,
-        openNoteModal,
-        setOpenNoteModal,
-        isDraggable,
-        setIsDraggable,
-      }}
-    >
+    <CanvasUI.Provider value={contextValue}>
       {children}
     </CanvasUI.Provider>
   );

@@ -2,6 +2,7 @@
 import { Note } from "@/types/NoteList";
 import { CanvasData } from "@/types/CanvasSession";
 import { createContext, useState, Dispatch, SetStateAction, ReactNode } from "react";
+import React from "react";
 
 // Define the context type
 interface ManagedUIContextType {
@@ -19,6 +20,8 @@ interface ManagedUIContextType {
     setOpenImportModal: Dispatch<SetStateAction<boolean>>;
     focusedSegment: keyof CanvasData | null;
     setFocusedSegment: (segment: keyof CanvasData | null) => void;
+
+
 }
 
 // Defining context with proper type
@@ -33,6 +36,7 @@ export function ManagedUIProvider({ children }: { children: ReactNode }) {
     const [currentNote, setCurrentNote] = useState<Note | null>(null);
     const [segmentKey, setSegmentKey] = useState<keyof CanvasData | null>(null);
     const [focusedSegment, setFocusedSegment] = useState<keyof CanvasData | null>(null);
+
 
     return (
         <ManagedUI.Provider
@@ -51,9 +55,19 @@ export function ManagedUIProvider({ children }: { children: ReactNode }) {
                 setOpenImportModal,
                 focusedSegment,
                 setFocusedSegment: (segment: keyof CanvasData | null) => setFocusedSegment(segment),
+            
             }}
         >
             {children}
         </ManagedUI.Provider>
     );
+}
+
+export function useDictionary() {
+  const dictionary = React.useContext(ManagedUI)
+  if (dictionary === null) {
+    throw new Error('useDictionary hook must be used within DictionaryProvider')
+  }
+
+  return dictionary
 }
