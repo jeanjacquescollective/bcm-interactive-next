@@ -68,3 +68,11 @@ export function CanvasUIProvider({
     </CanvasUI.Provider>
   );
 }
+
+export function useDictionary() {
+  const context = React.useContext(CanvasUI);
+  if (!context) {
+    throw new Error("useDictionary must be used within a CanvasUIProvider");
+  }
+  return context.dictionary;
+}

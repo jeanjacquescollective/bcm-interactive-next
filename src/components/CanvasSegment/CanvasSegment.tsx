@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { use, useContext, useEffect, useState } from "react";
 import NoteList from "./NoteList";
 import { Note } from "@/types/NoteList";
 import { CanvasData, CanvasSegmentData } from "@/types/CanvasSession";
 import { useDroppable } from "@dnd-kit/core";
-import { CanvasUI } from "@/contexts/CanvasUI";
+import { CanvasUI, useDictionary } from "@/contexts/CanvasUI";
 import CanvasSegmentModals from "./CanvasSegmentModals";
 import { useCanvasSegmentModals } from "@/hooks/useCanvasSegmentModals";
 
@@ -71,6 +71,8 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
     canvasUI?.setOpenNoteModal(true);
   };
 
+  const dictionary = useDictionary();
+
   return (
     <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full h-full box-border flex flex-1 flex-col bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100  ${extraClasses}" data-type="canvas-segment-inner">
       <div className="flex items-center mb-4">
@@ -106,7 +108,7 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
         onClick={handleAddNote}
         type="button"
       >
-        ＋ Add Note
+        ＋ {dictionary?.addNote || "Add Note"}
       </button>
 
       <CanvasSegmentModals

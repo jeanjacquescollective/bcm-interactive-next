@@ -63,11 +63,3 @@ export function ManagedUIProvider({ children }: { children: ReactNode }) {
     );
 }
 
-export function useDictionary() {
-  const dictionary = React.useContext(ManagedUI)
-  if (dictionary === null) {
-    throw new Error('useDictionary hook must be used within DictionaryProvider')
-  }
-
-  return dictionary
-}

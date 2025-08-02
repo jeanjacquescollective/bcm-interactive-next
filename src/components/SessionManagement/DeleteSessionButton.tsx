@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Button from "../ui/Button";
 import { Trash2 as DeleteIcon } from "react-feather";
+import { useDictionary } from "@/contexts/CanvasUI";
 
 interface DeleteSessionButtonProps {
     onDelete: () => void;
@@ -28,6 +29,8 @@ const DeleteSessionButton: React.FC<DeleteSessionButtonProps> = ({
         setShowModal(false);
     };
 
+    const dictionary = useDictionary();
+
     return (
         <>
             <button
@@ -41,12 +44,12 @@ const DeleteSessionButton: React.FC<DeleteSessionButtonProps> = ({
                     ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-[#d32f2f]/10 cursor-pointer"}
                     dark:border-red-600 dark:text-red-400 dark:hover:bg-red-950
                 `}
-                aria-label={sessionName ? `Delete "${sessionName}"` : "Delete Session"}
+                aria-label={sessionName ? `${dictionary?.delete || "Delete Session"} "${sessionName}"` : "Delete Session"}
             >
                 <DeleteIcon size={18} />
                 {sessionName
-                    ? `Delete "${sessionName}"`
-                    : "Delete Session"}
+                    ? `${dictionary?.delete || "Delete Session"} "${sessionName}"`
+                    : dictionary?.delete || "Delete Session"}
             </button>
             {showModal && (
                 <div

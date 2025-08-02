@@ -3,6 +3,7 @@ import React from "react";
 import { NoteListProps } from "@/types/NoteList";
 import NoteItem from "./NoteItem";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useDictionary } from "@/contexts/CanvasUI";
 const NoteList: React.FC<NoteListProps> = ({
   notes,
   expandedNoteIds,
@@ -22,11 +23,13 @@ const NoteList: React.FC<NoteListProps> = ({
   //   const newNotes = arrayMove(notes, oldIndex, newIndex);
   //   onSortEnd(newNotes);
   // };
-    if (notes.length === 0 || !notes) {
-        return (
-            <div className="text-gray-500 italic py-4 text-center">No notes</div>
-        );
-    }
+
+  const dictionary = useDictionary();
+  if (notes.length === 0 || !notes) {
+      return (
+          <div className="text-gray-500 italic py-4 text-center">{dictionary?.noNotes || "No notes"}</div>
+      );
+  }
     if (notes.some((note) => typeof(note.id) !== "string")) {
       return (
         <div className="text-red-500 italic py-4 text-center">

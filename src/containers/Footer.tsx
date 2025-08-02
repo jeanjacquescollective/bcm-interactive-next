@@ -1,5 +1,4 @@
 import React from 'react';
-
 const Footer: React.FC = () => {
     return (
         <div className="col-span-5 row-start-3 mt-6 text-gray-500 text-sm text-center py-4">
@@ -11,6 +10,7 @@ const Footer: React.FC = () => {
                 <p className="text-xs mt-1">All data is stored locally in your browser</p>
             </div>
             </div>
+            
         </div>
     );
 };

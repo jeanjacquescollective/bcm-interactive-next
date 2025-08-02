@@ -67,11 +67,9 @@ const MainContent: React.FC = () => {
         handleSessionCreate={handleSessionCreate}
         handleSessionDelete={handleSessionDelete}
         getLastModified={getLastModified}
-        updateURLWithSessionId={() => {}}
+        updateURLWithSessionId={() => { }}
       />
-      <CanvasUIProvider>
-        <CanvasContent COLORS={COLORS} />
-      </CanvasUIProvider>
+      <CanvasContent COLORS={COLORS} />
     </>
   );
 };

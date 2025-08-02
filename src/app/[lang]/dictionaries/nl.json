@@ -1,4 +1,27 @@
 {
+    "title": "Business Model Canvas",
+  "addSession": "Sessie aanmaken",
+  "editSession": "Sessie bewerken",
+  "deleteSession": "Sessie verwijderen",
+  "addNote": "Notitie toevoegen",
+  "editNote": "Notitie bewerken",
+  "deleteNote": "Notitie verwijderen",
+  "confirmDeleteSession": "Weet je zeker dat je deze sessie wilt verwijderen?",
+  "noNotes": "Geen notities.",
+  "edit": "Bewerken",
+  "delete": "Verwijder",
+  "segments": {
+    "keyPartners": "Belangrijke Partners",
+    "keyActivities": "Belangrijke Activiteiten",
+    "keyResources": "Belangrijke Middelen",
+    "valuePropositions": "Waarde Proposities",
+    "customerRelationships": "Klantrelaties",
+    "channels": "Kanalen",
+    "customerSegments": "Klantsegmenten",
+    "costStructure": "Kostenstructuur",
+    "revenueStreams": "Inkomstenstromen"
+  },
+  "tot hier": "Tot hier",
   "header": {
     "manageCanvasesText": "Beheer Canvas",
     "helpText": "Hulp"
@@ -13,10 +36,7 @@
     "nameText": "Naam",
     "returnText": "Terug"
   },
-  "title": "Business Model Canvas",
-  "addCanvas": "Canvas Toevoegen",
-  "edit": "Bewerken",
-  "delete": "Verwijderen",
+
   "confirmDelete": "Weet je zeker dat je deze canvas wilt verwijderen?",
   "modals": {
     "import": {
