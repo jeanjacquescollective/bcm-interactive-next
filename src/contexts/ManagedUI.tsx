@@ -1,65 +1,96 @@
+// contexts/ManagedUIContext.tsx
 "use client";
-import { Note } from "@/types/NoteList";
-import { CanvasData } from "@/types/CanvasSession";
-import { createContext, useState, Dispatch, SetStateAction, ReactNode } from "react";
-import React from "react";
 
-// Define the context type
+import React, { createContext, useState, useMemo, ReactNode } from "react";
+
 interface ManagedUIContextType {
-    openTimerModal: boolean;
-    setOpenTimerModal: Dispatch<SetStateAction<boolean>>;
-    openNoteModal: boolean;
-    setOpenNoteModal: Dispatch<SetStateAction<boolean>>;
-    openBrainstormModal: boolean;
-    setOpenBrainstormModal: Dispatch<SetStateAction<boolean>>;
-    currentNote: Note | null;
-    setCurrentNote: Dispatch<SetStateAction<Note | null>>;
-    segmentKey: keyof CanvasData | null;
-    setSegmentKey: (k: keyof CanvasData | null) => void;
-    openImportModal: boolean;
-    setOpenImportModal: Dispatch<SetStateAction<boolean>>;
-    focusedSegment: keyof CanvasData | null;
-    setFocusedSegment: (segment: keyof CanvasData | null) => void;
+  setSegmentKey: React.Dispatch<React.SetStateAction<string | undefined>>;
+  openTimerModal: boolean;
+  setOpenTimerModal: React.Dispatch<React.SetStateAction<boolean>>;
 
+  openBrainstormModal: boolean;
+  setOpenBrainstormModal: React.Dispatch<React.SetStateAction<boolean>>;
 
+  openImportModal: boolean;
+  setOpenImportModal: React.Dispatch<React.SetStateAction<boolean>>;
+
+  showConfirmModal: boolean;
+  setShowConfirmModal: React.Dispatch<React.SetStateAction<boolean>>;
+  confirmTitle?: string;
+  setConfirmTitle: React.Dispatch<React.SetStateAction<string | undefined>>;
+  confirmMessage?: string;
+  setConfirmMessage: React.Dispatch<React.SetStateAction<string | undefined>>;
+  confirmCallback?: () => void;
+  setConfirmCallback: React.Dispatch<
+    React.SetStateAction<(() => void) | undefined>
+  >;
+
+  focusedSegment?: string;
+  setFocusedSegment: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-// Defining context with proper type
-export const ManagedUI = createContext<ManagedUIContextType | undefined>(undefined);
+export const ManagedUI = createContext<ManagedUIContextType | undefined>(
+  undefined
+);
 
-// Context Wrapper
 export function ManagedUIProvider({ children }: { children: ReactNode }) {
-    const [openTimerModal, setOpenTimerModal] = useState(false);
-    const [openNoteModal, setOpenNoteModal] = useState(false);
-    const [openBrainstormModal, setOpenBrainstormModal] = useState(false);
-    const [openImportModal, setOpenImportModal] = useState(false);
-    const [currentNote, setCurrentNote] = useState<Note | null>(null);
-    const [segmentKey, setSegmentKey] = useState<keyof CanvasData | null>(null);
-    const [focusedSegment, setFocusedSegment] = useState<keyof CanvasData | null>(null);
+  const [openTimerModal, setOpenTimerModal] = useState(false);
+  const [openBrainstormModal, setOpenBrainstormModal] = useState(false);
+  const [openImportModal, setOpenImportModal] = useState(false);
 
+  // ConfirmModal state
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmTitle, setConfirmTitle] = useState<string | undefined>();
+  const [confirmMessage, setConfirmMessage] = useState<string | undefined>();
+  const [confirmCallback, setConfirmCallback] = useState<
+    (() => void) | undefined
+  >();
+  // SegmentKey state
+  // eslint-disable-next-line
+  const [segmentKey, setSegmentKey] = useState<string | undefined>();
 
-    return (
-        <ManagedUI.Provider
-            value={{
-                openTimerModal,
-                setOpenTimerModal,
-                openNoteModal,
-                setOpenNoteModal,
-                openBrainstormModal,
-                setOpenBrainstormModal,
-                currentNote,
-                setCurrentNote,
-                segmentKey,
-                setSegmentKey,
-                openImportModal,
-                setOpenImportModal,
-                focusedSegment,
-                setFocusedSegment: (segment: keyof CanvasData | null) => setFocusedSegment(segment),
-            
-            }}
-        >
-            {children}
-        </ManagedUI.Provider>
-    );
+  const [focusedSegment, setFocusedSegment] = useState<string | undefined>();
+
+  const value = useMemo(
+    () => ({
+      setSegmentKey,
+      openTimerModal,
+      setOpenTimerModal,
+      openBrainstormModal,
+      setOpenBrainstormModal,
+      openImportModal,
+      setOpenImportModal,
+      showConfirmModal,
+      setShowConfirmModal,
+      confirmTitle,
+      setConfirmTitle,
+      confirmMessage,
+      setConfirmMessage,
+      confirmCallback,
+      setConfirmCallback,
+      focusedSegment,
+      setFocusedSegment,
+    }),
+    [
+      setSegmentKey,
+      openTimerModal,
+      setOpenTimerModal,
+      openBrainstormModal,
+      setOpenBrainstormModal,
+      openImportModal,
+      setOpenImportModal,
+      showConfirmModal,
+      setShowConfirmModal,
+      confirmTitle,
+      setConfirmTitle,
+      confirmMessage,
+      setConfirmMessage,
+      confirmCallback,
+      setConfirmCallback,
+      focusedSegment,
+      setFocusedSegment,
+    ]
+  );
+
+  return <ManagedUI.Provider value={value}>{children}</ManagedUI.Provider>;
 }
-

@@ -6,6 +6,7 @@ import CreateSessionButton from "./CreateSessionButton";
 import { useCanvasDataContext } from "@/contexts/CanvasData";
 import { EMPTY_SESSION } from "@/lib/actions/sessionActions";
 import { CanvasSession } from "@/types/CanvasSession";
+import { useDictionary } from "@/contexts/CanvasUI";
 
 interface SessionToolbarProps {
   handleSessionNameChange: (newName: string) => void;
@@ -71,6 +72,8 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
       return updated;
     });
   };
+
+  const dictionary = useDictionary();
   // Show loading spinner if sessionsData is not loaded yet
   if (!sessionsData) {
     return (
@@ -79,7 +82,7 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
         </svg>
-        Loading sessions...
+        {dictionary.ui.loadingText}
       </div>
     );
   }
@@ -88,7 +91,7 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
     <div className="sticky top-0 z-20 w-full flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4 p-4 bg-white/40 dark:bg-gray-900/40 backdrop-blur-md shadow-lg border border-white/30 dark:border-gray-700/30 transition-colors">
       <div className="flex items-center gap-2 flex-wrap">
         <label htmlFor="session-select" className="text-sm text-gray-900 dark:text-gray-200">
-          Session:
+          {dictionary.sessions?.selectSession || "Select Session"}:
         </label>
 
         <select

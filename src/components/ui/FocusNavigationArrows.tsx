@@ -33,19 +33,19 @@ const FocusNavigationArrows: React.FC = () => {
   const goToNextSegment = useCallback(() => {
     const currentIndex = getCurrentSegmentIndex();
     if (currentIndex >= 0 && currentIndex < segmentOptions.length - 1) {
-      managedUI?.setFocusedSegment(segmentOptions[currentIndex + 1].key);
+      managedUI?.setFocusedSegment(segmentOptions[currentIndex + 1].key.toString());
     }
   }, [getCurrentSegmentIndex, managedUI, segmentOptions]);
 
   const goToPreviousSegment = useCallback(() => {
     const currentIndex = getCurrentSegmentIndex();
     if (currentIndex > 0) {
-      managedUI?.setFocusedSegment(segmentOptions[currentIndex - 1].key);
+      managedUI?.setFocusedSegment(segmentOptions[currentIndex - 1].key.toString());
     }
   }, [getCurrentSegmentIndex, managedUI, segmentOptions]);
 
   const exitFocusMode = useCallback(() => {
-    managedUI?.setFocusedSegment(null);
+    managedUI?.setFocusedSegment(undefined);
   }, [managedUI]);
 
   // Keyboard navigation

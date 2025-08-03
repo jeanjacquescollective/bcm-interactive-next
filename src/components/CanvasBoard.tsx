@@ -12,7 +12,7 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import CanvasSegment from "./CanvasSegment/CanvasSegment";
 import CanvasModals from "./modals/canvasboard/CanvasModals";
 import FocusNavigationArrows from "@/components/ui/FocusNavigationArrows";
-import { CanvasUI } from "@/contexts/CanvasUI";
+import { CanvasUI, useDictionary } from "@/contexts/CanvasUI";
 import { ManagedUI } from "@/contexts/ManagedUI";
 import { CanvasData } from "@/types/CanvasSession";
 import { Note } from "@/types/NoteList";
@@ -81,6 +81,9 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
     [managedUI?.focusedSegment]
   );
 
+  const dictionary = useDictionary();
+
+
   const board = useMemo(() => {
     if (managedUI?.focusedSegment) {
       const title = String(managedUI.focusedSegment)
@@ -98,13 +101,16 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
         </div>
       );
     }
-
+  if (!dictionary) {
+    // Handle missing dictionary
+    return null;
+  }
     return (
       <div className="w-full h-full rounded-lg shadow-md">
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 p-4 w-full">
           {shouldShowSegment("keyPartners") && (
             <CanvasSegment
-              segmentTitle="Key Partners"
+              segmentTitle={dictionary?.segments.keyPartners || "Key Partners"}
               segmentData={canvasData.keyPartners}
               handleSegmentChange={handleSegmentChange}
               extraClasses="flex flex-col col-span-1 w-full"
@@ -116,7 +122,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
               <div className="flex flex-col gap-2 col-span-1 w-full">
                 {shouldShowSegment("keyActivities") && (
                   <CanvasSegment
-                    segmentTitle="Key Activities"
+                    segmentTitle= {dictionary?.segments.keyActivities || "Key Activities"}
                     segmentData={canvasData.keyActivities}
                     handleSegmentChange={handleSegmentChange}
                     extraClasses="flex-1 w-full"
@@ -124,7 +130,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
                 )}
                 {shouldShowSegment("keyResources") && (
                   <CanvasSegment
-                    segmentTitle="Key Resources"
+                    segmentTitle= {dictionary?.segments.keyResources || "Key Resources"}
                     segmentData={canvasData.keyResources}
                     handleSegmentChange={handleSegmentChange}
                     extraClasses="flex-1 w-full"
@@ -135,7 +141,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
 
           {shouldShowSegment("valuePropositions") && (
             <CanvasSegment
-              segmentTitle="Value Propositions"
+              segmentTitle={dictionary?.segments.valuePropositions || "Value Propositions"}
               segmentData={canvasData.valuePropositions}
               handleSegmentChange={handleSegmentChange}
               extraClasses="flex flex-col col-span-2 w-full"
@@ -147,7 +153,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
               <div className="flex flex-col gap-2 col-span-1 w-full">
                 {shouldShowSegment("customerRelationships") && (
                   <CanvasSegment
-                    segmentTitle="Customer Relationships"
+                    segmentTitle={dictionary?.segments.customerRelationships || "Customer Relationships"}
                     segmentData={canvasData.customerRelationships}
                     handleSegmentChange={handleSegmentChange}
                     extraClasses="flex-1 w-full"
@@ -155,7 +161,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
                 )}
                 {shouldShowSegment("channels") && (
                   <CanvasSegment
-                    segmentTitle="Channels"
+                    segmentTitle={dictionary?.segments.channels || "Channels"}
                     segmentData={canvasData.channels}
                     handleSegmentChange={handleSegmentChange}
                     extraClasses="flex-1 w-full"
@@ -166,7 +172,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
 
           {shouldShowSegment("customerSegments") && (
             <CanvasSegment
-              segmentTitle="Customer Segments"
+              segmentTitle={dictionary?.segments.customerSegments || "Customer Segments"}
               segmentData={canvasData.customerSegments}
               handleSegmentChange={handleSegmentChange}
               extraClasses="col-span-1 w-full"
@@ -179,7 +185,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
             <div className="flex flex-col md:flex-row p-4 gap-2 w-full">
               {shouldShowSegment("costStructure") && (
                 <CanvasSegment
-                  segmentTitle="Cost Structure"
+                  segmentTitle={dictionary?.segments.costStructure || "Cost Structure"}
                   segmentData={canvasData.costStructure}
                   handleSegmentChange={handleSegmentChange}
                   extraClasses="flex-1 w-full"
@@ -187,7 +193,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
               )}
               {shouldShowSegment("revenueStreams") && (
                 <CanvasSegment
-                  segmentTitle="Revenue Streams"
+                  segmentTitle={dictionary?.segments.revenueStreams || "Revenue Streams"}
                   segmentData={canvasData.revenueStreams}
                   handleSegmentChange={handleSegmentChange}
                   extraClasses="flex-1 w-full"
@@ -199,7 +205,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
         {shouldShowSegment("brainStormArea") && (
           <div className="flex p-4 shadow gap-2 w-full">
             <CanvasSegment
-              segmentTitle="Brainstorm Area"
+              segmentTitle={dictionary?.brainstorm.title || "Brainstorm Area"}
               segmentData={canvasData.brainStormArea}
               handleSegmentChange={handleSegmentChange}
               extraClasses="flex-1 w-full"
@@ -208,7 +214,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({ handleDragEnd, handleSegmentC
         )}
       </div>
     );
-  }, [canvasData, handleSegmentChange, managedUI?.focusedSegment, shouldShowSegment]);
+  }, [canvasData, handleSegmentChange, managedUI?.focusedSegment, shouldShowSegment, dictionary]);
 
 
   return (

@@ -80,7 +80,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
       </button>
 
       <button
-        onClick={() => typeof note.id === "string" && onDelete(note.id)}
+        onClick={() => onDelete(note.id?.toString() || "")}
         title="Delete"
         type="button"
         aria-label="Delete note"

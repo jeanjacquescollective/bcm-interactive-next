@@ -2,6 +2,7 @@ import Sidebar from "@/containers/Sidebar";
 import { getDictionary } from "./dictionaries";
 import MainContent from "@/containers/MainContent";
 import { CanvasUIProvider } from "@/contexts/CanvasUI";
+import Modals from "@/components/modals/Modals";
 
 export const metadata = {
   title: "Business Model Canvas",
@@ -24,7 +25,6 @@ export default async function Page({
     // Handle the case where the dictionary is not found
     throw new Error(`Dictionary not found for locale: ${lang}`);
   }
-  console.log("Page", JSON.stringify(dictionary));
 
   if (!dictionary) {
     return <div>Loading...</div>;
@@ -40,10 +40,9 @@ export default async function Page({
           <MainContent />
         </main>
         <Sidebar
-          manageCanvasesText={dictionary.header.manageCanvasesText}
-          helpText={dictionary.header.helpText}
         />
       </div>
+      <Modals />
     </CanvasUIProvider>
   );
 }

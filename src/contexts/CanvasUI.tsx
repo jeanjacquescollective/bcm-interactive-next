@@ -18,7 +18,7 @@ interface CanvasUIContextType {
   setIsDraggable: (value: boolean) => void;
 
   language: string;
-  dictionary: Record<string, string>;
+  dictionary: Record<string, Record<string, string>>;
 }
 
 export const CanvasUI = createContext<CanvasUIContextType | undefined>(undefined);
@@ -29,7 +29,7 @@ export function CanvasUIProvider({
   language,
 }: {
   children: ReactNode;
-  dictionary: Record<string, string>;
+  dictionary: Record<string, Record<string, string>>;
   language: string;
 }) {
   const [currentNote, setCurrentNote] = useState<Note | null>(null);

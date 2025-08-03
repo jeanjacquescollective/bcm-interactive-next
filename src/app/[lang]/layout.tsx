@@ -13,7 +13,6 @@ export const metadata = {
 };
 
 import { ReactNode } from "react";
-import Modals from "@components/modals/Modals";
 
 import { ManagedUIProvider } from "@/contexts/ManagedUI";
 import { CanvasDataProvider } from "@/contexts/CanvasData";
@@ -30,7 +29,6 @@ export default async function RootLayout({
       <ManagedUIProvider>
         <CanvasDataProvider>
           {children}
-          <Modals />
         </CanvasDataProvider>
       </ManagedUIProvider>
   );

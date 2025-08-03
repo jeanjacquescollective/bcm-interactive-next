@@ -14,9 +14,7 @@ const ImportDropdown: React.FC<Props> = ({ sideBarOpen }) => {
   const canvasUI = useContext(ManagedUI);
 
   const handleImportClick = () => {
-    console.log(canvasUI)
     canvasUI?.setOpenImportModal(true);
-    console.log("Import clicked");
   };
 
   return (

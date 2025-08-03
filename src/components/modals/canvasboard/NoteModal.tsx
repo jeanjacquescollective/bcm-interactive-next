@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import Modal from "@/components/ui/DefaultModal";
 import { Note } from "@/types/NoteList";
 import colors from "@/data/colors.json";
+import { useDictionary } from "@/contexts/CanvasUI";
 
 interface NoteModalProps {
   onClose: () => void;
@@ -18,7 +19,6 @@ const NoteModal: React.FC<NoteModalProps> = ({
   note = undefined,
   disabled = false,
 }) => {
-  // Detect dark mode once
   const isDarkMode = useMemo(() => {
     return (
       typeof window !== "undefined" &&
@@ -26,17 +26,15 @@ const NoteModal: React.FC<NoteModalProps> = ({
     );
   }, []);
 
-  // Default to first color if no noteColor passed
   const defaultColor = colors[0].hex;
 
-  // Local state for form inputs
   const [currentNoteTitle, setCurrentNoteTitle] = useState(note?.title || "");
   const [currentNoteDescription, setCurrentNoteDescription] = useState(note?.description || "");
   const [currentNoteColor, setCurrentNoteColor] = useState<{ light: string; dark: string }>(
     () => note?.color || defaultColor
   );
+  const [titleError, setTitleError] = useState<string | null>(null);
 
-  // Update local state if props change
   useEffect(() => {
     setCurrentNoteTitle(note?.title || "");
   }, [note?.title]);
@@ -49,28 +47,32 @@ const NoteModal: React.FC<NoteModalProps> = ({
     setCurrentNoteColor(note?.color || defaultColor);
   }, [note?.color, defaultColor]);
 
-  // Handle color select button click
+  // Clear error when user types
+  useEffect(() => {
+    if (currentNoteTitle.trim()) setTitleError(null);
+  }, [currentNoteTitle]);
+
   const handleColorSelect = (color: { light: string; dark: string }) => {
     setCurrentNoteColor(color);
   };
 
-  // Save handler
   const handleSave = () => {
-    if (
-      !currentNoteTitle.trim() &&
-      !currentNoteDescription.trim()
-    ) return; // safeguard
-
+    if (!currentNoteTitle.trim()) {
+      setTitleError("Please fill in the title.");
+      return;
+    }
     onSave({
-      id: note?.id || undefined, // Use existing ID or default to undefined
+      id: note?.id || undefined,
       title: currentNoteTitle.trim(),
       description: currentNoteDescription.trim(),
       color: currentNoteColor,
     });
   };
-  // Determine if save button should be disabled
+
   const isSaveDisabled =
-    disabled || (!currentNoteTitle.trim() && !currentNoteDescription.trim());
+    disabled || !currentNoteTitle.trim();
+
+  const dictionary = useDictionary();
 
   return (
     <Modal onClose={onClose} title={title}>
@@ -79,21 +81,26 @@ const NoteModal: React.FC<NoteModalProps> = ({
           <input type="hidden" name="id" value={note.id} />
         )}
         <input
-          className={`w-full border rounded px-2 py-1 ${isDarkMode ? "bg-gray-800 border-gray-700 text-white" : "bg-white border-gray-300 text-black"}`}
-          placeholder="Title"
+          className={`w-full border rounded px-2 py-1 ${isDarkMode ? "bg-gray-800 border-gray-700 text-white" : "bg-white border-gray-300 text-black"} ${titleError ? "border-red-500" : ""}`}
+          placeholder={`${dictionary.placeholders.title ? dictionary.placeholders.title : "Title"}`}
           value={currentNoteTitle}
           onChange={(e) => setCurrentNoteTitle(e.target.value)}
           autoFocus
         />
+        {titleError && (
+          <div className="text-red-500 text-sm">{titleError}</div>
+        )}
         <textarea
           className={`w-full border rounded px-2 py-1 ${isDarkMode ? "bg-gray-800 border-gray-700 text-white" : "bg-white border-gray-300 text-black"}`}
-          placeholder="Description"
+          placeholder={`${dictionary.placeholders.description ? dictionary.placeholders.description : "Description"}`}
           value={currentNoteDescription}
           onChange={(e) => setCurrentNoteDescription(e.target.value)}
           rows={3}
         />
         <div className="flex gap-2 items-center">
-          <span>Color:</span>
+          <span>
+            {typeof dictionary.color === "string" ? dictionary.color : "Color"}:
+          </span>
           {colors.map((color) => {
             const colorHex = isDarkMode ? color.hex.dark : color.hex.light;
             const isSelected =
@@ -117,7 +124,7 @@ const NoteModal: React.FC<NoteModalProps> = ({
             onClick={onClose}
             type="button"
           >
-            Cancel
+            {dictionary.ui?.cancelText || "Cancel"}
           </button>
           <button
             className={`px-3 py-1 rounded text-white ${isSaveDisabled
@@ -128,7 +135,7 @@ const NoteModal: React.FC<NoteModalProps> = ({
             type="button"
             disabled={isSaveDisabled}
           >
-            Save
+            {dictionary.ui?.saveText || "Save"}
           </button>
         </div>
       </div>

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 
 import SessionToolbar from "@components/SessionManagement/SessionToolbar";
 import CanvasContent from "@/components/CanvasContent";
-import { CanvasUIProvider } from "@/contexts/CanvasUI";
 import { useCanvasDataContext } from "@/contexts/CanvasData";
 import { CanvasData } from "@/types/CanvasSession";
 

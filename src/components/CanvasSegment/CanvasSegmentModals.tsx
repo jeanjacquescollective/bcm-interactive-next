@@ -1,6 +1,7 @@
 import React from "react";
 import ConfirmModal from "@components/modals/ConfirmModal";
 import QuestionsModal from "./QuestionsModal";
+import { useDictionary } from "@/contexts/CanvasUI";
 
 interface CanvasSegmentModalsProps {
   showQuestions: boolean;
@@ -20,9 +21,7 @@ const CanvasSegmentModals: React.FC<CanvasSegmentModalsProps> = ({
   segmentQuestions
 }) => {
   // console.log(segmentQuestions);
-  if (!segmentQuestions || segmentQuestions.nl.length === 0) {
-    return null; // No questions to display
-  }
+ 
   // Assuming params is available in this context, but in a React component, you can't use 'await' directly.
   // If you want to get the language from props or context, do it synchronously.
   // For demonstration, let's assume 'lang' is passed as a prop or derived synchronously:
@@ -35,6 +34,10 @@ const CanvasSegmentModals: React.FC<CanvasSegmentModalsProps> = ({
     lang === "nl" && segmentQuestions.nl.length > 0
       ? segmentQuestions.nl
       : segmentQuestions.en;
+  const dictionary = useDictionary();
+   if (!segmentQuestions || segmentQuestions.nl.length === 0) {
+    return null; // No questions to display
+  }
   return (
     <>
       {showQuestions && (
@@ -46,10 +49,9 @@ const CanvasSegmentModals: React.FC<CanvasSegmentModalsProps> = ({
 
       {confirmDeleteId && (
         <ConfirmModal
-          
           onConfirm={() => onConfirmDelete(confirmDeleteId)}
           onCancel={onCancelDelete}
-          message="Are you sure you want to delete this note?"
+          message={dictionary?.ui.confirmMessage || "Are you sure you want to delete this note?"}
         />
       )}
     </>

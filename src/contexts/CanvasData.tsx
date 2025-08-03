@@ -61,7 +61,13 @@ const sessionService = useMemo(() => new SessionService(localStorageProvider), [
       let sessions = await sessionService.getAll();
 
       if (sessions.length === 0) {
-        await sessionService.add("default session");
+        let defaultName = "default session";
+        if (navigator.language.startsWith("fr")) {
+          defaultName = "session par défaut";
+        } else if (navigator.language.startsWith("nl")) {
+          defaultName = "standaard sessie";
+        }
+        await sessionService.add(defaultName);
         sessions = await sessionService.getAll();
       }
 

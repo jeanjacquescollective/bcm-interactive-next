@@ -1,8 +1,42 @@
 {
-    "header": {
-        "manageCanvasesText": "Manage Canvases",
-        "helpText": "Help"
+    "title": "Business Model Canvas",
+    "sessions": {
+        "addSession": "Create Session",
+        "editSession": "Edit Session",
+        "deleteSession": "Delete Session",
+        "selectSession": "Select Session",
+        "noSessions": "No sessions available.",
+        "sessionNamePlaceholder": "Enter a name for the session",
+        "sessionNameLabel": "Session Name",
+        "sessionDeleteConfirm": "Are you sure you want to delete this session: "
     },
+    "notes": {
+        "addNote": "Add Note",
+        "editNote": "Edit Note",
+        "deleteNote": "Delete Note",
+        "confirmDeleteNote": "Are you sure you want to delete this note?",
+        "noNotes": "No notes available.",
+        "notePlaceholder": "Type your note here...",
+        "noteTitlePlaceholder": "Enter a title for the note"
+    },
+    "edit": "Edit",
+    "delete": "Delete",
+    "segments": {
+        "keyPartners": "Key Partners",
+        "keyActivities": "Key Activities",
+        "keyResources": "Key Resources",
+        "valuePropositions": "Value Propositions",
+        "customerRelationships": "Customer Relationships",
+        "channels": "Channels",
+        "customerSegments": "Customer Segments",
+        "costStructure": "Cost Structure",
+        "revenueStreams": "Revenue Streams"
+    },
+    "placeholders": {
+        "title": "Title",
+        "description": "Description"
+    },
+    "color": "Color",
     "ui": {
         "closeText": "Close",
         "saveText": "Save",
@@ -11,33 +45,35 @@
         "editText": "Edit",
         "addText": "Add",
         "nameText": "Name",
-        "returnText": "Return"
+        "returnText": "Return",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "confirmTitle": "Are you sure?",
+        "confirmMessage": "Are you sure you want to perform this action?",
+        "helpText": "Help"
     },
-    "title": "Business Model Canvas",
-    "addSession": "Create Session",
-    "edit": "Edit",
-    "delete": "Delete",
-    "confirmDelete": "Are you sure you want to delete this canvas?",
-    "modals": {
-        "import": {
-            "title": "Import Canvas",
-            "description": "Import a canvas from a CSV file.",
-            "fileInputLabel": "Select CSV file",
-            "importButtonText": "Import",
-            "cancelButtonText": "Cancel",
-            "successMessage": "Canvas imported successfully!",
-            "errorMessage": "Failed to import canvas. Please check the file format."
-        },
-        "export": {
-            "title": "Export Canvas",
-            "description": "Export the current canvas to a CSV file.",
-            "exportButtonText": "Export",
-            "cancelButtonText": "Cancel"
-        },
-        "questions": {
-            "title": "Questions",
-            "description": "Answer the following questions to complete the canvas."
-        }
+    "brainstorm": {
+        "title": "Brainstorm",
+        "addIdea": "Add Idea",
+        "postIdea": "Post Idea",
+        "ideaPlaceholder": "Type your idea here...",
+        "ideasTitle": "Ideas",
+        "noIdeas": "No ideas posted.",
+        "deleteIdea": "Are you sure you want to delete this idea?"
+    },
+    "focusMode": {
+        "enter": "Enter Focus Mode",
+        "exit": "Exit Focus Mode",
+        "description": "Focus mode hides all segments except the selected one."
+    },
+    "import": {
+        "title": "Import Session",
+        "description": "Import a session from a CSV or JSON file.",
+        "fileInputLabel": "Select file",
+        "importButtonText": "Import",
+        "cancelButtonText": "Cancel",
+        "successMessage": "Session imported successfully!",
+        "errorMessage": "Failed to import session.",
+        "invalidFileFormat": "Invalid file format. Only CSV and JSON files are allowed."
     }
-
 }

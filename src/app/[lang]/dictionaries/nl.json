@@ -1,15 +1,27 @@
 {
-    "title": "Business Model Canvas",
-  "addSession": "Sessie aanmaken",
-  "editSession": "Sessie bewerken",
-  "deleteSession": "Sessie verwijderen",
-  "addNote": "Notitie toevoegen",
-  "editNote": "Notitie bewerken",
-  "deleteNote": "Notitie verwijderen",
-  "confirmDeleteSession": "Weet je zeker dat je deze sessie wilt verwijderen?",
-  "noNotes": "Geen notities.",
+  "title": "Business Model Canvas",
+  "sessions": {
+    "addSession": "Sessie aanmaken",
+    "editSession": "Sessie bewerken",
+    "deleteSession": "Sessie verwijderen",
+    "selectSession": "Selecteer Sessie",
+    "noSessions": "Geen sessies beschikbaar.",
+    "sessionNamePlaceholder": "Voer een naam in voor de sessie",
+    "sessionNameLabel": "Sessie Naam",
+    "sessionDeleteConfirm": "Wil je deze sessie verwijderen: "
+  },
+  "notes": {
+    "addNote": "Notitie toevoegen",
+    "editNote": "Notitie bewerken",
+    "deleteNote": "Notitie verwijderen",
+    "confirmDeleteNote": "Weet je zeker dat je deze notitie wilt verwijderen?",
+    "noNotes": "Geen notities beschikbaar.",
+    "notePlaceholder": "Typ hier je notitie...",
+    "noteTitlePlaceholder": "Voer een titel in voor de notitie"
+  },
   "edit": "Bewerken",
   "delete": "Verwijder",
+
   "segments": {
     "keyPartners": "Belangrijke Partners",
     "keyActivities": "Belangrijke Activiteiten",
@@ -21,43 +33,51 @@
     "costStructure": "Kostenstructuur",
     "revenueStreams": "Inkomstenstromen"
   },
-  "tot hier": "Tot hier",
-  "header": {
-    "manageCanvasesText": "Beheer Canvas",
-    "helpText": "Hulp"
+  "placeholders": {
+    "title": "Titel",
+    "description": "Beschrijving"
   },
+  "color": "Kleur",
   "ui": {
     "closeText": "Sluiten",
     "saveText": "Opslaan",
     "cancelText": "Annuleren",
-    "deleteText": "Verwijderen",
+    "deleteText": "Verwijder",
     "editText": "Bewerken",
     "addText": "Toevoegen",
     "nameText": "Naam",
-    "returnText": "Terug"
+    "returnText": "Terug",
+    "confirm": "Bevestigen",
+    "cancel": "Annuleren",
+    "confirmTitle": "Ben je zeker?",
+    "confirmMessage": "Weet je zeker dat je deze actie wilt uitvoeren?",
+    "helpText": "Hulp"
   },
-
-  "confirmDelete": "Weet je zeker dat je deze canvas wilt verwijderen?",
-  "modals": {
-    "import": {
-      "title": "Canvas Importeren",
-      "description": "Importeer een canvas vanuit een CSV-bestand.",
-      "fileInputLabel": "Selecteer CSV-bestand",
-      "importButtonText": "Importeren",
-      "cancelButtonText": "Annuleren",
-      "successMessage": "Canvas succesvol geïmporteerd!",
-      "errorMessage": "Importeren van canvas mislukt. Controleer het bestandsformaat."
-    },
-    "export": {
-      "title": "Canvas Exporteren",
-      "description": "Exporteer het huidige canvas naar een CSV-bestand.",
-      "exportButtonText": "Exporteren",
-      "cancelButtonText": "Annuleren"
-    },
-    "questions": {
-      "title": "Vragen",
-      "description": "Beantwoord de volgende vragen om het canvas te voltooien."
-    }
+  "brainstorm": {
+    "title": "Brainstormen",
+    "addIdea": "Voeg een idee toe",
+    "postIdea": "Plaats idee",
+    "ideaPlaceholder": "Typ hier je idee...",
+    "ideasTitle": "Ideeën",
+    "noIdeas": "Geen ideeën geplaatst.",
+    "deleteIdea": "Weet je zeker dat je dit idee wilt verwijderen?"
+  },
+  "focusMode": {
+    "enter": "Focusmodus aan",
+    "exit": "Focusmodus uit",
+    "description": "Focusmodus verbergt alle segmenten behalve de geselecteerde."
+  },
+  "import": {
+    "title": "Sessie Importeren",
+    "description": "Importeer een sessie vanuit een CSV- of JSON-bestand.",
+    "fileInputLabel": "Selecteer bestand",
+    "importButtonText": "Importeren",
+    "cancelButtonText": "Annuleren",
+    "successMessage": "Sessie succesvol geïmporteerd!",
+    "errorMessage": "Importeren van sessie mislukt.",
+    "invalidFileFormat": "Ongeldig bestandsformaat. Alleen CSV- en JSON-bestanden zijn toegestaan."
+  },
+  "header": {
+    "manageCanvasesText": "Beheer Canvas"
   }
-
 }

@@ -27,7 +27,7 @@ const NoteList: React.FC<NoteListProps> = ({
   const dictionary = useDictionary();
   if (notes.length === 0 || !notes) {
       return (
-          <div className="text-gray-500 italic py-4 text-center">{dictionary?.noNotes || "No notes"}</div>
+          <div className="text-gray-500 italic py-4 text-center">{dictionary?.notes.noNotes.toString() || "No notes"}</div>
       );
   }
     if (notes.some((note) => typeof(note.id) !== "string")) {

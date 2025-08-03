@@ -36,13 +36,11 @@ const ColorSchemeToggle = dynamic(() => import("@/components/sidebar/ColorScheme
 // Eagerly load above-the-fold UI buttons
 import TimerButton from "@/components/ui/TimerButton";
 import BrainstormButton from "@/components/ui/BrainstormButton";
+import { useDictionary } from "@/contexts/CanvasUI";
 
-type HeaderProps = {
-  manageCanvasesText: string;
-  helpText: string;
-};
 
-const Sidebar: React.FC<HeaderProps> = ({ helpText }) => {
+
+const Sidebar: React.FC = () => {
   const managedUI = useContext(ManagedUI);
   const [sideBarOpen, setSideBarOpen] = useState(false);
   const [hoveredDropdown, setHoveredDropdown] = useState<"export" | "import" | null>(null);
@@ -102,12 +100,11 @@ const Sidebar: React.FC<HeaderProps> = ({ helpText }) => {
     console.log("Toggling focus mode");
     if (managedUI?.focusedSegment) {
       // If already in focus mode, exit it
-      managedUI.setFocusedSegment(null);
+      managedUI.setFocusedSegment(undefined);
     } else {
       // Enter focus mode - start with first segment
-      managedUI?.setFocusedSegment(segmentOptions[0].key);
+      managedUI?.setFocusedSegment(String(segmentOptions[0].key));
     }
-    console.log("Focus mode toggled:", managedUI?.focusedSegment);
   }, [managedUI, segmentOptions]);
 
   const getFocusButtonLabel = () => {
@@ -121,6 +118,8 @@ const Sidebar: React.FC<HeaderProps> = ({ helpText }) => {
   const getFocusButtonIcon = () => {
     return managedUI?.focusedSegment ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />;
   };
+
+  const dictionary = useDictionary();
 
   return (
     <aside
@@ -179,7 +178,7 @@ const Sidebar: React.FC<HeaderProps> = ({ helpText }) => {
 
           {/* Focus Mode Button */}
           <li className="h-10">
-            <Tooltip text={managedUI?.focusedSegment ? "Exit Focus Mode" : "Enter Focus Mode"}>
+            <Tooltip text={managedUI?.focusedSegment ? dictionary.focusMode.exit : dictionary.focusMode.enter}>
               <SidebarButton
                 icon={getFocusButtonIcon()}
                 label={getFocusButtonLabel()}
@@ -202,10 +201,10 @@ const Sidebar: React.FC<HeaderProps> = ({ helpText }) => {
           </li>
 
           <li className="h-10">
-            <Tooltip text={helpText}>
+            <Tooltip text={dictionary.ui.helpText.toString() || "Help"}>
               <SidebarButton
                 icon={<HelpCircle className="w-5 h-5" />}
-                label={helpText}
+                label={dictionary.ui.helpText.toString() || "Help"}
                 sideBarOpen={sideBarOpen}
                 ariaLabel="Help"
               />

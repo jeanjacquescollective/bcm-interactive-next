@@ -1,4 +1,4 @@
-import React, { use, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import NoteList from "./NoteList";
 import { Note } from "@/types/NoteList";
 import { CanvasData, CanvasSegmentData } from "@/types/CanvasSession";
@@ -57,7 +57,6 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
     const updatedNotes = notes.filter((n) => n.id !== id);
     setNotes(updatedNotes);
     handleSegmentChange(segmentData.key as keyof CanvasData, updatedNotes, segmentQuestions);
-    setConfirmDeleteId(null);
   };
 
   const handleSortEnd = (newNotes: Note[]) => {
@@ -97,7 +96,7 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
           expandedNoteIds={expandedNoteIds}
           onExpand={handleExpand}
           onEdit={handleEdit}
-          onDelete={(id) => setConfirmDeleteId(id)}
+          onDelete={handleDelete}
           segmentKey={segmentData.key}
           onSortEnd={handleSortEnd}
         />
@@ -108,7 +107,7 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
         onClick={handleAddNote}
         type="button"
       >
-        ＋ {dictionary?.addNote || "Add Note"}
+        ＋ {typeof dictionary?.notes.addNote === "string" ? dictionary.notes.addNote : "Add Note"}
       </button>
 
       <CanvasSegmentModals

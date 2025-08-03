@@ -1,84 +1,101 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 // Example modal components
 import { ManagedUI } from "@/contexts/ManagedUI";
-import TimerModal from './TimerModal';
-import { DndContext, DragEndEvent } from '@dnd-kit/core';
-import BrainstormModal from './BrainstormModal';
-import ImportModal from './ImportModal';
-
+import TimerModal from "./TimerModal";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import BrainstormModal from "./BrainstormModal";
+import ImportModal from "./ImportModal";
+import ConfirmModal from "./ConfirmModal";
 
 const Modals: React.FC = () => {
-    const managedUI = React.useContext(ManagedUI);
-    const { openTimerModal, setOpenTimerModal } = managedUI || {};
-    const { openBrainstormModal, setOpenBrainstormModal } = managedUI || {};
-    const { openImportModal, setOpenImportModal } = managedUI || {};
-    const [position, setPosition] = useState({ x: 100, y: 100 });
+  const managedUI = React.useContext(ManagedUI);
+  const { openTimerModal, setOpenTimerModal } = managedUI || {};
+  const { openBrainstormModal, setOpenBrainstormModal } = managedUI || {};
+  const { openImportModal, setOpenImportModal } = managedUI || {};
 
-    const handleDragEnd = (event: DragEndEvent) => {
-        if (event.active.id === "timer-modal" && event.delta) {
-            setPosition((prev) => ({
-                x: prev.x + event.delta.x,
-                y: prev.y + event.delta.y,
-            }));
-        }
-    };
+  const [position, setPosition] = useState({ x: 100, y: 100 });
+  if (!managedUI) {
+    return null; // or handle the case where ManagedUI is not available
+  }
 
-    // const closeModal = () => {
-    //     if (managedUI) {
-    //         managedUI.setOpenTimerModal(false);
-    //         managedUI.setOpenBrainstormModal(false);
-    //         managedUI.setOpenNoteModal(false);
-    //     }
-    // };
+  const {
+    confirmTitle,
+    confirmMessage,
+    confirmCallback,
+    showConfirmModal,
+    setShowConfirmModal,
+  } = managedUI;
 
-
-
-
-
-    if (!managedUI) {
-        return null; // or handle the case where ManagedUI is not available
+  const handleDragEnd = (event: DragEndEvent) => {
+    if (event.active.id === "timer-modal" && event.delta) {
+      setPosition((prev) => ({
+        x: prev.x + event.delta.x,
+        y: prev.y + event.delta.y,
+      }));
     }
-    return (
-        <>
-            <DndContext onDragEnd={handleDragEnd}>
-                {/* {activeModal === 'helpModal' && (
+  };
+
+  // const closeModal = () => {
+  //     if (managedUI) {
+  //         managedUI.setOpenTimerModal(false);
+  //         managedUI.setOpenBrainstormModal(false);
+  //         managedUI.setOpenNoteModal(false);
+  //     }
+  // };
+
+  if (!managedUI) {
+    return null; // or handle the case where ManagedUI is not available
+  }
+  return (
+    <>
+      <DndContext onDragEnd={handleDragEnd}>
+        {/* {activeModal === 'helpModal' && (
             <HelpModal onClose={closeModal} />
             )}
             {activeModal === 'noteEditor' && (
             <NoteEditor onClose={closeModal} />
             )} */}
-                {openTimerModal && (
-                    <TimerModal
-                        onClose={() => setOpenTimerModal && setOpenTimerModal(false)} position={position}
-                    />
-                )}
-                {openBrainstormModal && (
-                    <BrainstormModal
-                        onClose={() => setOpenBrainstormModal && setOpenBrainstormModal(false) }
-                    />
-                )}
-                {openImportModal && (
-                    <ImportModal
-                        onImport={() => {
-                            if (managedUI && managedUI.setSegmentKey) {
-                                // Replace 'canvas' with a valid key from CanvasData, e.g. 'someValidKey'
-                                managedUI.setSegmentKey('canvas' as unknown as keyof typeof managedUI.segmentKey | null);
-                                managedUI.setOpenImportModal(false);
-                                
-
-                            }
-                        }}
-                        onClose={() => setOpenImportModal && setOpenImportModal(false)}
-                    />
-                )}
-                
-
-            </DndContext>
-           
-        </>
-    );
+        {openTimerModal && (
+          <TimerModal
+            onClose={() => setOpenTimerModal && setOpenTimerModal(false)}
+            position={position}
+          />
+        )}
+        {openBrainstormModal && (
+          <BrainstormModal
+            onClose={() =>
+              setOpenBrainstormModal && setOpenBrainstormModal(false)
+            }
+          />
+        )}
+        {openImportModal && (
+          <ImportModal
+            onImport={() => {
+              if (managedUI && managedUI.setSegmentKey) {
+                // Replace 'canvas' with a valid key from CanvasData, e.g. 'someValidKey'
+                managedUI.setSegmentKey("canvas");
+                managedUI.setOpenImportModal(false);
+              }
+            }}
+            onClose={() => setOpenImportModal && setOpenImportModal(false)}
+          />
+        )}
+        {showConfirmModal && (
+          <ConfirmModal
+            title={confirmTitle}
+            message={confirmMessage}
+            onCancel={() => setShowConfirmModal(false)}
+            onConfirm={() => {
+              setShowConfirmModal(false);
+              confirmCallback?.();
+            }}
+          />
+        )}
+      </DndContext>
+    </>
+  );
 };
 
 export default Modals;

@@ -13,40 +13,44 @@ export class SessionService {
   }
 
   async getAll(): Promise<CanvasSession[]> {
-    // Example: Fetch segment questions from Supabase for each session segment
-    // This is just a demonstration of how you might integrate the logic.
-    // You may want to refactor this for your actual use-case.
+    // Check if Supabase env variables are available
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-    // If you want to fetch questions for all segments and store them in sessions,
-    // you could do something like this (pseudo-code):
-
-    const { createClient } = await import("@supabase/supabase-js");
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
     const sessions = await this.storage.loadSessions();
-    for (const session of sessions) {
-      console.log(`Loading questions for session: ${JSON.stringify(session.data)}`);
-      for (const key of Object.keys(session.data)) {
-        const { data, error } = await supabase
-          .from("canvas_segment_questions")
-          .select("questions")
-          .eq("segment_key", key)
-          .single();
-        if (!error && data?.questions) {
 
+    if (!supabaseUrl || !supabaseKey) {
+      // Fallback: just return sessions as-is if Supabase is not configured
+      return sessions;
+    }
+
+    try {
+      const { createClient } = await import("@supabase/supabase-js");
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      for (const session of sessions) {
+        for (const key of Object.keys(session.data)) {
+          const { data, error } = await supabase
+            .from("canvas_segment_questions")
+            .select("questions")
+            .eq("segment_key", key)
+            .single();
+          if (!error && data?.questions) {
             session.data[key].questions = {
-            nl: data.questions["nl"] || [],
-            en: data.questions["en"] || [],
+              nl: data.questions["nl"] || [],
+              en: data.questions["en"] || [],
             };
-          // console.log(`Loaded ${questions.length} questions for segment ${key}`);
+          }
         }
       }
+      // Optionally, save updated sessions back to storage
+      await this.storage.saveSessions(sessions);
+      return await this.storage.loadSessions();
+    } catch (err) {
+      // Fallback: return sessions as-is if Supabase import or query fails
+      console.error("Error fetching questions from Supabase:", err);
+      return sessions;
     }
-    // Optionally, save updated sessions back to storage
-    await this.storage.saveSessions(sessions);
-    return await this.storage.loadSessions();
   }
 
   async add(name: string): Promise<CanvasSession[]> {
@@ -60,7 +64,6 @@ export class SessionService {
   async addWithData(
     session: CanvasSession
   ): Promise<CanvasSession[]> {
-    console.log("Adding session with id:", session.id);
     let sessions: CanvasSession[] = [];
     try {
       sessions = await this.storage.loadSessions();
@@ -68,7 +71,6 @@ export class SessionService {
       console.error("Error loading sessions:", error);
       throw error;
     }
-    console.log("Adding session with data:", session);
     // Assuming you have a function or constant that provides a default CanvasData object
     const defaultData: CanvasSession["data"] = {
       keyPartners: { items: [], questions: { nl: [], en: [] }, key: "keyPartners" },
@@ -83,7 +85,6 @@ export class SessionService {
       brainStormArea: { items: [], questions: { nl: [], en: [] }, key: "brainStormArea" },
     };
     const mergedData = { ...defaultData, ...session.data };
-    console.log(sessions, session.id);
     if (sessions.some(s => s.id && s.id === session.id)) {
       throw new Error(`Session with id "${session.id}" already exists.`);
     }

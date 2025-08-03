@@ -4,9 +4,9 @@
 import React, { useCallback, useState } from "react";
 import { Download } from "react-feather";
 import SidebarButton from "./SidebarButton";
-import { useSelectedSession } from "@/hooks/useSelectedSession";
 import { exportSessionToFormat } from "@/utils/exportSession";
 import { toast } from "sonner";
+import { useCanvasDataContext } from "@/contexts/CanvasData";
 
 const EXPORT_FORMATS = ["PDF", "JPG", "CSV", "JSON"] as const;
 
@@ -18,8 +18,9 @@ type Props = {
 };
 
 const ExportDropdown: React.FC<Props> = ({ sideBarOpen, isOpen, setHovered, clearHovered }) => {
-  const session = useSelectedSession();
   const [loading, setLoading] = useState(false);
+  const { sessionsData, sessionId } = useCanvasDataContext();
+  const session = sessionsData.find((s) => s.id === sessionId);
 
   const handleExport = useCallback(async (format: string) => {
     if (!session) {
