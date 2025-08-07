@@ -26,9 +26,9 @@ const CanvasSegmentModals: React.FC<CanvasSegmentModalsProps> = ({
   // If you want to get the language from props or context, do it synchronously.
   // For demonstration, let's assume 'lang' is passed as a prop or derived synchronously:
 
-  // Get language from URL path (e.g., /nl/ or /en/)
-  const langMatch = typeof window !== "undefined" ? window.location.pathname.match(/^\/(nl|en)\//) : null;
-  const lang = langMatch ? langMatch[1] : "en";
+  // Get language from URL path (e.g., /nl/ or /en-US/)
+  const langMatch = typeof window !== "undefined" ? window.location.pathname.match(/^\/(nl|en-US)\//) : null;
+  const lang = langMatch ? langMatch[1] : "en-US";
 
   const questions =
     lang === "nl" && segmentQuestions.nl.length > 0
