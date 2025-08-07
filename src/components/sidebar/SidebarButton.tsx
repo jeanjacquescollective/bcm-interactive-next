@@ -7,6 +7,7 @@ type Props = {
   onClick?: () => void;
   className?: string;
   ariaLabel?: string;
+  children?: React.ReactNode;
 };
 
 const SidebarButton: React.FC<Props> = ({
@@ -16,6 +17,7 @@ const SidebarButton: React.FC<Props> = ({
   onClick,
   className = "",
   ariaLabel,
+  children
 }) => (
   <button
     className={`flex items-center w-full px-3 py-2 rounded-lg hover:bg-gray-800 transition ${className}`}
@@ -33,6 +35,7 @@ const SidebarButton: React.FC<Props> = ({
     >
       {label}
     </span>
+    { children}
   </button>
 );
 
