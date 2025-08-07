@@ -76,10 +76,10 @@ const Sidebar: React.FC = () => {
     const currentPath = window.location.pathname;
     if (currentPath.startsWith("/nl")) {
       window.location.pathname = currentPath.replace(/^\/nl/, "/en");
-    } else if (currentPath.startsWith("/en")) {
-      window.location.pathname = currentPath.replace(/^\/en/, "/nl");
+    } else if (currentPath.startsWith("/en-US")) {
+      window.location.pathname = currentPath.replace(/^\/en-US/, "/nl");
     } else {
-      window.location.pathname = "/en" + currentPath;
+      window.location.pathname = "/en-US" + currentPath;
     }
   }, []);
 
