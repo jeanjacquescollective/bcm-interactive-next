@@ -19,6 +19,8 @@ interface CanvasUIContextType {
 
   language: string;
   dictionary: Record<string, Record<string, string>>;
+
+    addNoteHandler?: (note: Omit<Note, "id"> | Note, key: keyof CanvasData) => void;
 }
 
 export const CanvasUI = createContext<CanvasUIContextType | undefined>(undefined);

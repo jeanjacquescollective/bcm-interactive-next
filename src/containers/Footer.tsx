@@ -8,10 +8,7 @@ const Footer: React.FC = () => {
                 {/* Left column */}
                 <div className="flex flex-col items-center md:items-start">
                     <span className="text-gray-700 font-semibold text-sm">
-                        © 2025 Zjaak
-                    </span>
-                    <span className="text-xs text-gray-500">
-                        Inspired by Canvanizer
+                        © 2025 <a href="https://www.zjaak.be" target="_blank">Zjaak</a>
                     </span>
                 </div>
                 {/* Center column */}

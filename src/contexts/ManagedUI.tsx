@@ -54,6 +54,7 @@ export function ManagedUIProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       setSegmentKey,
+      segmentKey,
       openTimerModal,
       setOpenTimerModal,
       openBrainstormModal,
@@ -73,6 +74,7 @@ export function ManagedUIProvider({ children }: { children: ReactNode }) {
     }),
     [
       setSegmentKey,
+      segmentKey,
       openTimerModal,
       setOpenTimerModal,
       openBrainstormModal,

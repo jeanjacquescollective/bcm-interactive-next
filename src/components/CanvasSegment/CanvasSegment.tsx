@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import NoteList from "./NoteList";
 import { Note } from "@/types/NoteList";
 import { CanvasData, CanvasSegmentData } from "@/types/CanvasSession";
 import { useDroppable } from "@dnd-kit/core";
-import { CanvasUI, useDictionary } from "@/contexts/CanvasUI";
+import { useDictionary } from "@/contexts/CanvasUI";
 import CanvasSegmentModals from "./CanvasSegmentModals";
 import { useCanvasSegmentModals } from "@/hooks/useCanvasSegmentModals";
 
@@ -18,8 +18,8 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
   segmentTitle,
   segmentData,
   handleSegmentChange,
+  extraClasses
 }) => {
-  const canvasUI = useContext(CanvasUI);
   const {
     showQuestions,
     setShowQuestions,
@@ -29,11 +29,13 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
 
   const { items: segmentItems, questions: segmentQuestions } = segmentData || {
     items: [],
-    questions: [],
+    questions: { nl: [], en: [] },
   };
 
   const [notes, setNotes] = useState<Note[]>(segmentItems || []);
   const [expandedNoteIds, setExpandedNoteIds] = useState<string[]>([]);
+  const [openNoteModal, setOpenNoteModal] = useState(false);
+  const [currentNote, setCurrentNote] = useState<Note | null>(null);
 
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({ id: segmentData.key });
 
@@ -48,9 +50,8 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
   };
 
   const handleEdit = (note: Note) => {
-    canvasUI?.setCurrentNote(note);
-    canvasUI?.setSegmentKey(segmentData.key as keyof CanvasData);
-    canvasUI?.setOpenNoteModal(true);
+    setCurrentNote(note);
+    setOpenNoteModal(true);
   };
 
   const handleDelete = (id: string) => {
@@ -65,15 +66,29 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
   };
 
   const handleAddNote = () => {
-    canvasUI?.setCurrentNote(null);
-    canvasUI?.setSegmentKey(segmentData.key as keyof CanvasData);
-    canvasUI?.setOpenNoteModal(true);
+    setCurrentNote(null);
+    setOpenNoteModal(true);
+  };
+
+  const handleSaveNote = (note: Note) => {
+    let updatedItems: Note[];
+    if (note.id) {
+      updatedItems = notes.map((n) => (n.id === note.id ? note : n));
+    } else {
+      updatedItems = [...notes, { ...note, id: Date.now().toString() }];
+    }
+    setNotes(updatedItems);
+    handleSegmentChange(segmentData.key as keyof CanvasData, updatedItems, segmentQuestions);
+    setOpenNoteModal(false);
   };
 
   const dictionary = useDictionary();
 
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full h-full box-border flex flex-1 flex-col bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100  ${extraClasses}" data-type="canvas-segment-inner">
+    <div
+      className={`border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full h-full box-border flex flex-1 flex-col bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 ${extraClasses}`}
+      data-type="canvas-segment-inner"
+    >
       <div className="flex items-center mb-4">
         <h2 className="flex-1 m-0 text-xl font-bold">{segmentTitle}</h2>
         <button
@@ -107,7 +122,7 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
         onClick={handleAddNote}
         type="button"
       >
-        ＋ {typeof dictionary?.notes.addNote === "string" ? dictionary.notes.addNote : "Add Note"}
+        ＋ {dictionary?.notes.addNote || "Add Note"}
       </button>
 
       <CanvasSegmentModals
@@ -117,6 +132,10 @@ const CanvasSegment: React.FC<CanvasSegmentProps> = ({
         onCancelDelete={() => setConfirmDeleteId(null)}
         onConfirmDelete={handleDelete}
         segmentQuestions={segmentQuestions}
+        openNoteModal={openNoteModal}
+        onCloseNoteModal={() => setOpenNoteModal(false)}
+        currentNote={currentNote}
+        onSaveNote={handleSaveNote}
       />
     </div>
   );

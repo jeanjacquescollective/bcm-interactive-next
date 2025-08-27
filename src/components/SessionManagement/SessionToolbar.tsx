@@ -32,10 +32,16 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
     setCanvasData,
   } = useCanvasDataContext();
 
+  const dictionary = useDictionary();
+
+ 
   const selectedSession = sessionsData.find((s) => s.id?.toString() === sessionId);
   const [localName, setLocalName] = useState(selectedSession?.name ?? "");
 
-  // Update input value when session changes
+  const hasSessions = sessionsData.length > 0;
+  const disableSessionActions = sessionsData.length <= 1 || !hasSessions;
+
+  // Sync local name with selected session
   useEffect(() => {
     setLocalName(selectedSession?.name ?? "");
     inputRef.current?.focus();
@@ -44,19 +50,15 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
   const handleSessionSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value;
     const session = sessionsData.find((s) => s.id?.toString() === id);
-
     setSessionId(id);
     setCanvasData(session?.data ?? EMPTY_SESSION.data);
-    updateURLWithSessionId(id); 
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalName(e.target.value);
+    updateURLWithSessionId(id);
   };
 
   const handleNameBlur = () => {
-    if (localName.trim() && localName !== selectedSession?.name) {
-      handleSessionNameChange(localName.trim());
+    const trimmed = localName.trim();
+    if (trimmed && trimmed !== selectedSession?.name) {
+      handleSessionNameChange(trimmed);
     }
   };
 
@@ -73,24 +75,43 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
     });
   };
 
-  const dictionary = useDictionary();
-  // Show loading spinner if sessionsData is not loaded yet
+   // Show loading spinner until sessions are loaded
   if (!sessionsData) {
     return (
       <div className="p-4 text-center text-gray-500 dark:text-gray-400 flex flex-col items-center justify-center">
-        <svg className="animate-spin h-6 w-6 mb-2 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        <svg
+          className="animate-spin h-6 w-6 mb-2 text-gray-400"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+          />
         </svg>
         {dictionary.ui.loadingText}
       </div>
     );
   }
 
+
   return (
-    <div className="sticky top-0 z-20 w-full flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4 p-4 bg-white/40 dark:bg-gray-900/40 backdrop-blur-md shadow-lg border border-white/30 dark:border-gray-700/30 transition-colors">
+    <div className="sticky top-0 z-20 w-full flex flex-col md:flex-row md:items-center md:justify-between gap-2 p-4 bg-white/40 dark:bg-gray-900/40 backdrop-blur-md shadow-lg border border-white/30 dark:border-gray-700/30 transition-colors">
       <div className="flex items-center gap-2 flex-wrap">
-        <label htmlFor="session-select" className="text-sm text-gray-900 dark:text-gray-200">
+        <label
+          htmlFor="session-select"
+          className="text-sm text-gray-900 dark:text-gray-200"
+        >
           {dictionary.sessions?.selectSession || "Select Session"}:
         </label>
 
@@ -100,9 +121,9 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
           value={sessionId ?? ""}
           onChange={handleSessionSelectChange}
           aria-label="Select session"
-          disabled={sessionsData.length === 0}
+          disabled={!hasSessions}
         >
-          {sessionsData.length === 0 ? (
+          {!hasSessions ? (
             <option value="">Loading...</option>
           ) : (
             sessionsData.map((session) => {
@@ -121,28 +142,28 @@ const SessionToolbar: React.FC<SessionToolbarProps> = ({
           className="border border-gray-300 dark:border-gray-700 px-2 py-1 rounded bg-white dark:bg-gray-800 dark:text-gray-100 transition-colors"
           type="text"
           value={localName}
-          onChange={handleInputChange}
+          onChange={(e) => setLocalName(e.target.value)}
           onBlur={handleNameBlur}
           placeholder="Session name"
           aria-label="Edit session name"
           style={{ minWidth: 120 }}
-          disabled={sessionsData.length === 0}
+          disabled={!hasSessions}
         />
 
         <DeleteSessionButton
           onDelete={handleDelete}
           sessionName={selectedSession?.name ?? ""}
-          disabled={sessionsData.length <= 1 || sessionsData.length === 0}
+          disabled={disableSessionActions}
         />
 
         <CreateSessionButton onCreate={handleSessionCreate} />
       </div>
 
       <div className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap transition-colors">
-        {sessionsData.length === 0 ? "No sessions yet." : `Saved: ${getLastModified()}`}
+        {!hasSessions ? "No sessions yet." : `Saved: ${getLastModified()}`}
       </div>
     </div>
   );
-}
+};
 
 export default SessionToolbar;

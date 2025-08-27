@@ -1,6 +1,8 @@
 import React from "react";
 import ConfirmModal from "@components/modals/ConfirmModal";
 import QuestionsModal from "./QuestionsModal";
+import NoteModal from "@/components/modals/NoteModal";
+import { Note } from "@/types/NoteList";
 import { useDictionary } from "@/contexts/CanvasUI";
 
 interface CanvasSegmentModalsProps {
@@ -10,6 +12,10 @@ interface CanvasSegmentModalsProps {
   onCancelDelete: () => void;
   onConfirmDelete: (id: string) => void;
   segmentQuestions: { nl: string[]; en: string[] };
+  openNoteModal: boolean;
+  onCloseNoteModal: () => void;
+  currentNote: Note | null;
+  onSaveNote: (note: Note) => void;
 }
 
 const CanvasSegmentModals: React.FC<CanvasSegmentModalsProps> = ({
@@ -18,15 +24,12 @@ const CanvasSegmentModals: React.FC<CanvasSegmentModalsProps> = ({
   confirmDeleteId,
   onCancelDelete,
   onConfirmDelete,
-  segmentQuestions
+  segmentQuestions,
+  openNoteModal,
+  onCloseNoteModal,
+  currentNote,
+  onSaveNote,
 }) => {
-  // console.log(segmentQuestions);
- 
-  // Assuming params is available in this context, but in a React component, you can't use 'await' directly.
-  // If you want to get the language from props or context, do it synchronously.
-  // For demonstration, let's assume 'lang' is passed as a prop or derived synchronously:
-
-  // Get language from URL path (e.g., /nl/ or /en-US/)
   const langMatch = typeof window !== "undefined" ? window.location.pathname.match(/^\/(nl|en-US)\//) : null;
   const lang = langMatch ? langMatch[1] : "en-US";
 
@@ -34,10 +37,11 @@ const CanvasSegmentModals: React.FC<CanvasSegmentModalsProps> = ({
     lang === "nl" && segmentQuestions.nl.length > 0
       ? segmentQuestions.nl
       : segmentQuestions.en;
+
   const dictionary = useDictionary();
-   if (!segmentQuestions || segmentQuestions.nl.length === 0) {
-    return null; // No questions to display
-  }
+
+
+
   return (
     <>
       {showQuestions && (
@@ -52,6 +56,16 @@ const CanvasSegmentModals: React.FC<CanvasSegmentModalsProps> = ({
           onConfirm={() => onConfirmDelete(confirmDeleteId)}
           onCancel={onCancelDelete}
           message={dictionary?.ui.confirmMessage || "Are you sure you want to delete this note?"}
+        />
+      )}
+
+      {openNoteModal && (
+        <NoteModal
+          onClose={onCloseNoteModal}
+          onSave={onSaveNote}
+          title={currentNote ? (dictionary?.notes.editNote || "Edit note") : (dictionary?.notes.addNote || "Add note")}
+          note={currentNote || undefined}
+          guidingQuestions={questions}
         />
       )}
     </>

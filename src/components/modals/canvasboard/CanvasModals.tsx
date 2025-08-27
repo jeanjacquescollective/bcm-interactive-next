@@ -1,7 +1,7 @@
 "use client";
 import React, { useContext } from "react";
 import { CanvasUI, useDictionary } from "@/contexts/CanvasUI";
-import NoteModal from "./NoteModal";
+import NoteModal from "../NoteModal-old";
 import { Note } from "@/types/NoteList";
 
 interface ModalsProps {

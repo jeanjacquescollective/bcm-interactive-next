@@ -46,6 +46,10 @@ TODO
 - GRAPHICS
   - lettertype gradient en logo
   - logo voor subsidies 
+- no notes available vervangen door richtvragen
+- waardepropositie mee starten
+- bij focus mode eerst waardepropositie
+- loading state van session 
 
 
 DONE
